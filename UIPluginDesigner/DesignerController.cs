@@ -2,6 +2,7 @@
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SFB;
 using System.IO;
@@ -30,10 +31,12 @@ namespace UIPluginDesigner
         private UITextInput _inputX, _inputY, _inputW, _inputH;
         private UITextInput _inputFontSize;
         private UITextInput _inputMenuW, _inputMenuH, _inputMenuX, _inputMenuY;
+        private UITextInput _inputAnchorX, _inputAnchorY;
 
         public void Start()
         {
             Debug.Log("DesignerController: Start");
+            if (Ui == null) Debug.LogError("DesignerController: Plugin.ui is null in Start!");
             CreateEditorPanel();
             CreatePreviewContainer();
         }
@@ -49,6 +52,7 @@ namespace UIPluginDesigner
         {
             var canvasGO = GameObject.Find("Canvas");
             if (canvasGO != null) return canvasGO.GetComponent<Canvas>();
+            Debug.LogWarning("DesignerController: Canvas object not found, finding via Type");
             return FindObjectOfType<Canvas>();
         }
 
@@ -61,81 +65,167 @@ namespace UIPluginDesigner
                 return;
             }
 
-            _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
-            _editorPanel.transform.SetParent(canvas.transform, false);
+            // Load Layout from Embedded Resource
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var resourceName = "UIPluginDesigner.editor_layout.json";
 
-            Ui.AttachImage(_editorPanel, new Color(0.1f, 0.1f, 0.1f, 0.95f));
-            Ui.MoveTransform(_editorPanel.transform, 140, 300, 0, 0.5f, 70, 0);
+            string json = null;
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            {
+                if (stream != null)
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        json = reader.ReadToEnd();
+                    }
+                }
+            }
 
-            var drag = _editorPanel.AddComponent<SimpleDrag>();
-            drag.Target = _editorPanel.transform as RectTransform;
-            drag.Canvas = canvas;
+            if (!string.IsNullOrEmpty(json))
+            {
+                Debug.Log("Loading Editor Layout from Embedded Resource");
+                var root = JSON.Parse(json);
 
-            // -- Palette Buttons --
-            float y = -5;
-            AddPaletteBtn("Button", ElementType.Button, ref y);
-            AddPaletteBtn("Label", ElementType.Label, ref y);
-            AddPaletteBtn("Input", ElementType.TextInput, ref y);
-            AddPaletteBtn("Dropdown", ElementType.Dropdown, ref y);
-            AddPaletteBtn("Checkbox", ElementType.Checkbox, ref y);
+                _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
+                _editorPanel.transform.SetParent(canvas.transform, false);
 
-            y -= 5;
-            Ui.AddButton(_editorPanel.transform, "Save", "Save", 7, 30, 12, 0.5f, 1, -18, y, SaveLayout);
-            Ui.AddButton(_editorPanel.transform, "Load", "Load", 7, 30, 12, 0.5f, 1, 18, y, LoadLayout);
+                // Apply Panel Settings from JSON
+                float pW = root["PanelWidth"] != null ? root["PanelWidth"].AsFloat : 140;
+                float pH = root["PanelHeight"] != null ? root["PanelHeight"].AsFloat : 300;
+                float pAX = root["PanelAnchorX"] != null ? root["PanelAnchorX"].AsFloat : 0;
+                float pAY = root["PanelAnchorY"] != null ? root["PanelAnchorY"].AsFloat : 0.5f;
+                float pX = root["PanelPosX"] != null ? root["PanelPosX"].AsFloat : 70;
+                float pY = root["PanelPosY"] != null ? root["PanelPosY"].AsFloat : 0;
+                
+                Ui.AttachImage(_editorPanel, new Color(0.1f, 0.1f, 0.1f, 0.95f));
+                Ui.MoveTransform(_editorPanel.transform, pW, pH, pAX, pAY, pX, pY);
 
-            y -= 16;
-            Ui.AddButton(_editorPanel.transform, "Export", "Export Code", 7, 50, 12, 0.5f, 1, 0, y, ExportCode);
+                var drag = _editorPanel.AddComponent<SimpleDrag>();
+                drag.Target = _editorPanel.transform as RectTransform;
+                drag.Canvas = canvas;
+                
+                var builder = new UILayoutBuilder(Ui, _editorPanel.transform);
+                var objects = builder.Build(root);
+                
+                BindEditorEvents(builder);
+            }
+            else
+            {
+                Debug.LogError("Editor Layout Resource not found: " + resourceName);
+                
+                _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
+                _editorPanel.transform.SetParent(canvas.transform, false);
+                Ui.MoveTransform(_editorPanel.transform, 140, 300, 0, 0.5f, 70, 0); // Fallback
+                
+                Ui.AddLabel(_editorPanel.transform, "Error", "Layout Resource not found", 140, 50, 0.5f, 0.5f, 0, 0, TextAlignmentOptions.Center, 12);
+            }
+        }
 
-            y -= 16;
-            Ui.AddButton(_editorPanel.transform, "Close", "Close", 7, 50, 12, 0.5f, 1, 0, y, () => Destroy(gameObject));
+        private void BindEditorEvents(UILayoutBuilder builder)
+        {
+            // Palette
+            float y = -5; // dummy ref
+            if (builder.GetObject("AddButton") != null) builder.Get<Button>("AddButton").onClick.AddListener(() => AddElement(ElementType.Button));
+            if (builder.GetObject("AddLabel") != null) builder.Get<Button>("AddLabel").onClick.AddListener(() => AddElement(ElementType.Label));
+            if (builder.GetObject("AddInput") != null) builder.Get<Button>("AddInput").onClick.AddListener(() => AddElement(ElementType.TextInput));
+            if (builder.GetObject("AddDropdown") != null) builder.Get<Button>("AddDropdown").onClick.AddListener(() => AddElement(ElementType.Dropdown));
+            if (builder.GetObject("AddCheckbox") != null) builder.Get<Button>("AddCheckbox").onClick.AddListener(() => AddElement(ElementType.Checkbox));
 
-            // -- Menu Settings --
-            y -= 18;
-            // Menu Size
-            Ui.AddLabel(_editorPanel.transform, "MenuSizeL", "Menu Size", 100, 14, 0, 1, 70, y, TextAlignmentOptions.Center, 7);
-            y -= 14;
-            _inputMenuW = Ui.AddTextInput(_editorPanel.transform, "MenuW", "250", TextAlignmentOptions.Center, 6, 40, 14, 0, 1, 45, y, (v) => UpdateMenuSize());
-            _inputMenuH = Ui.AddTextInput(_editorPanel.transform, "MenuH", "190", TextAlignmentOptions.Center, 6, 40, 14, 0, 1, 95, y, (v) => UpdateMenuSize());
+            // Actions
+            if (builder.GetObject("Save") != null) builder.Get<Button>("Save").onClick.AddListener(SaveLayout);
+            if (builder.GetObject("Load") != null) builder.Get<Button>("Load").onClick.AddListener(LoadLayout);
+            if (builder.GetObject("Export") != null) builder.Get<Button>("Export").onClick.AddListener(ExportCode);
+            if (builder.GetObject("Close") != null) builder.Get<Button>("Close").onClick.AddListener(() => Destroy(gameObject));
+
+            // Menu Size Inputs
+            _inputMenuW = builder.Get<UITextInput>("MenuW");
+            _inputMenuH = builder.Get<UITextInput>("MenuH");
             
-            var adjW = _inputMenuW.gameObject.AddComponent<InputNumberAdjuster>();
-            adjW.InputField = _inputMenuW.InputField;
-            var adjH = _inputMenuH.gameObject.AddComponent<InputNumberAdjuster>();
-            adjH.InputField = _inputMenuH.InputField;
+            if (_inputMenuW != null) {
+                _inputMenuW.InputField.onEndEdit.AddListener((v) => UpdateMenuSize());
+                _inputMenuW.InputField.onValueChanged.AddListener((v) => UpdateMenuSize());
+                var adj = _inputMenuW.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputMenuW.InputField;
+            }
+            if (_inputMenuH != null) {
+                _inputMenuH.InputField.onEndEdit.AddListener((v) => UpdateMenuSize());
+                _inputMenuH.InputField.onValueChanged.AddListener((v) => UpdateMenuSize());
+                var adj = _inputMenuH.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputMenuH.InputField;
+            }
 
-            y -= 18;
-            // Menu Position
-            Ui.AddLabel(_editorPanel.transform, "MenuPosL", "Menu Pos", 100, 14, 0, 1, 70, y, TextAlignmentOptions.Center, 7);
-            y -= 14;
-            _inputMenuX = Ui.AddTextInput(_editorPanel.transform, "MenuX", "0", TextAlignmentOptions.Center, 6, 40, 14, 0, 1, 45, y, (v) => UpdateMenuPos());
-            _inputMenuY = Ui.AddTextInput(_editorPanel.transform, "MenuY", "0", TextAlignmentOptions.Center, 6, 40, 14, 0, 1, 95, y, (v) => UpdateMenuPos());
+            // Menu Pos Inputs
+            _inputMenuX = builder.Get<UITextInput>("MenuX");
+            _inputMenuY = builder.Get<UITextInput>("MenuY");
 
-            var adjX = _inputMenuX.gameObject.AddComponent<InputNumberAdjuster>();
-            adjX.InputField = _inputMenuX.InputField;
-            var adjY = _inputMenuY.gameObject.AddComponent<InputNumberAdjuster>();
-            adjY.InputField = _inputMenuY.InputField;
+            if (_inputMenuX != null) {
+                _inputMenuX.InputField.onEndEdit.AddListener((v) => UpdateMenuPos());
+                _inputMenuX.InputField.onValueChanged.AddListener((v) => UpdateMenuPos());
+                var adj = _inputMenuX.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputMenuX.InputField;
+            }
+            if (_inputMenuY != null) {
+                _inputMenuY.InputField.onEndEdit.AddListener((v) => UpdateMenuPos());
+                _inputMenuY.InputField.onValueChanged.AddListener((v) => UpdateMenuPos());
+                var adj = _inputMenuY.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputMenuY.InputField;
+            }
 
-            // -- Inspector Area (Bottom half) --
-            float inspY = -175;
-            Ui.AddLabel(_editorPanel.transform, "InspTitle", "Inspector", 80, 14, 0.5f, 1, 0, inspY, TextAlignmentOptions.Center, 7);
-            inspY -= 16;
+            // Menu Anchor Inputs
+            _inputAnchorX = builder.Get<UITextInput>("MenuAnchorX");
+            _inputAnchorY = builder.Get<UITextInput>("MenuAnchorY");
 
-            Ui.AddButton(_editorPanel.transform, "DeleteElement", "DEL", 7, 35, 14, 0.5f, 1, -20, inspY, DeleteSelectedElement);
-            Ui.AddButton(_editorPanel.transform, "CopyElement", "COPY", 7, 35, 14, 0.5f, 1, 20, inspY, CopySelectedElement);
-            inspY -= 18;
+            if (_inputAnchorX != null) {
+                _inputAnchorX.InputField.onEndEdit.AddListener((v) => UpdateMenuAnchor());
+                _inputAnchorX.InputField.onValueChanged.AddListener((v) => UpdateMenuAnchor());
+                var adj = _inputAnchorX.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputAnchorX.InputField;
+            }
+            if (_inputAnchorY != null) {
+                _inputAnchorY.InputField.onEndEdit.AddListener((v) => UpdateMenuAnchor());
+                _inputAnchorY.InputField.onValueChanged.AddListener((v) => UpdateMenuAnchor());
+                var adj = _inputAnchorY.gameObject.AddComponent<InputNumberAdjuster>();
+                adj.InputField = _inputAnchorY.InputField;
+            }
 
-            _inputName = CreateInspectorInput("Name", ref inspY);
-            _inputText = CreateInspectorInput("Text", ref inspY);
-            _inputX = CreateInspectorInput("Pos X", ref inspY, true);
-            _inputY = CreateInspectorInput("Pos Y", ref inspY, true);
-            _inputW = CreateInspectorInput("Size W", ref inspY, true);
-            _inputH = CreateInspectorInput("Size H", ref inspY, true);
-            _inputFontSize = CreateInspectorInput("Font Size", ref inspY, true);
+            // Inspector Actions
+            if (builder.GetObject("DeleteElement") != null) builder.Get<Button>("DeleteElement").onClick.AddListener(DeleteSelectedElement);
+            if (builder.GetObject("CopyElement") != null) builder.Get<Button>("CopyElement").onClick.AddListener(CopySelectedElement);
+
+            // Inspector Inputs
+            _inputName = BindInspectorInput(builder, "Name", false);
+            _inputText = BindInspectorInput(builder, "Text", false);
+            _inputX = BindInspectorInput(builder, "PosX", true); // JSON Name is PosX_I
+            _inputY = BindInspectorInput(builder, "PosY", true);
+            _inputW = BindInspectorInput(builder, "SizeW", true);
+            _inputH = BindInspectorInput(builder, "SizeH", true);
+            _inputFontSize = BindInspectorInput(builder, "FontSize", true);
+        }
+
+        private UITextInput BindInspectorInput(UILayoutBuilder builder, string prefix, bool numeric)
+        {
+            var input = builder.Get<UITextInput>(prefix + "_I");
+            if (input != null)
+            {
+                // Use onValueChanged for real-time updates
+                input.InputField.onValueChanged.AddListener((val) => UpdateSelectedElement());
+                input.InputField.onEndEdit.AddListener((val) => UpdateSelectedElement());
+                
+                if (numeric)
+                {
+                    var adj = input.gameObject.AddComponent<InputNumberAdjuster>();
+                    adj.InputField = input.InputField;
+                }
+            }
+            return input;
         }
 
         private void UpdateMenuSize()
         {
             if (_previewMenuBg == null) return;
-            if (float.TryParse(_inputMenuW.InputField.text, out float w) && 
+            if (_inputMenuW != null && _inputMenuW.InputField != null && 
+                float.TryParse(_inputMenuW.InputField.text, out float w) && 
+                _inputMenuH != null && _inputMenuH.InputField != null && 
                 float.TryParse(_inputMenuH.InputField.text, out float h))
             {
                 var rt = _previewMenuBg.GetComponent<RectTransform>();
@@ -146,7 +236,9 @@ namespace UIPluginDesigner
         private void UpdateMenuPos()
         {
             if (_previewMenuBg == null) return;
-            if (float.TryParse(_inputMenuX.InputField.text, out float x) && 
+            if (_inputMenuX != null && _inputMenuX.InputField != null && 
+                float.TryParse(_inputMenuX.InputField.text, out float x) && 
+                _inputMenuY != null && _inputMenuY.InputField != null && 
                 float.TryParse(_inputMenuY.InputField.text, out float y))
             {
                 var rt = _previewMenuBg.GetComponent<RectTransform>();
@@ -154,42 +246,49 @@ namespace UIPluginDesigner
             }
         }
 
-        private void AddPaletteBtn(string text, ElementType type, ref float y)
+        private void UpdateMenuAnchor()
         {
-            Ui.AddButton(_editorPanel.transform, "Add" + text, "+ " + text, 8, 70, 14, 0.5f, 1, 0, y, () => {
-                Debug.Log("Palette Button Clicked: " + type);
-                AddElement(type);
-            });
-            y -= 12; // Reduced spacing
-        }
-
-        private UITextInput CreateInspectorInput(string label, ref float y, bool isNumeric = false)
-        {
-            Ui.AddLabel(_editorPanel.transform, label + "_L", label, 40, 12, 0, 1, 40, y, TextAlignmentOptions.Right, 7);
-            var input = Ui.AddTextInput(_editorPanel.transform, label + "_I", "", TextAlignmentOptions.Left, 5, 50, 14, 0, 1, 90, y, (val) => UpdateSelectedElement());
-            
-            if (isNumeric)
+            if (_previewMenuBg == null) return;
+            if (_inputAnchorX != null && _inputAnchorX.InputField != null && 
+                float.TryParse(_inputAnchorX.InputField.text, out float ax) && 
+                _inputAnchorY != null && _inputAnchorY.InputField != null && 
+                float.TryParse(_inputAnchorY.InputField.text, out float ay))
             {
-                var adjuster = input.gameObject.AddComponent<InputNumberAdjuster>();
-                adjuster.InputField = input.InputField;
+                var rt = _previewMenuBg.GetComponent<RectTransform>();
+                // Assuming Point Anchor (Min=Max)
+                rt.anchorMin = new Vector2(ax, ay);
+                rt.anchorMax = new Vector2(ax, ay);
+                // Keep pivot as is (usually 0.5, 0.5 from MoveTransform) to avoid unexpected shifts
             }
-
-            y -= 12;
-            return input;
         }
+
+
 
         private void CreatePreviewContainer()
         {
+            Debug.Log("DesignerController: CreatePreviewContainer");
             var canvas = GetCanvas();
+            if (canvas == null)
+            {
+                Debug.LogError("DesignerController: Canvas not found for PreviewContainer");
+                return;
+            }
             _previewContainer = new GameObject("PreviewContainer", typeof(RectTransform));
             _previewContainer.transform.SetParent(canvas.transform, false);
-            Ui.MoveTransform(_previewContainer.transform, 0, 0, 0.5f, 0.5f, 0, 0);
+            // Make PreviewContainer full screen so anchors work relative to screen
+            var pcRt = _previewContainer.GetComponent<RectTransform>();
+            pcRt.anchorMin = Vector2.zero;
+            pcRt.anchorMax = Vector2.one;
+            pcRt.sizeDelta = Vector2.zero;
+            pcRt.anchoredPosition = Vector2.zero;
 
             // Create the Menu Background
             _previewMenuBg = new GameObject("PreviewMenu");
             _previewMenuBg.transform.SetParent(_previewContainer.transform, false);
             Ui.AttachImage(_previewMenuBg, new Color(0.24f, 0.24f, 0.24f));
-            Ui.MoveTransform(_previewMenuBg.transform, 250, 190, 0.5f, 0.5f, 0, 0);
+            Ui.MoveTransform(_previewMenuBg.transform, 250, 190, 0.5f, 0.5f, 70, 180);
+            
+            Debug.Log("DesignerController: PreviewMenuBg created: " + (_previewMenuBg != null));
 
             var dragger = _previewMenuBg.AddComponent<ElementDragHandler>();
             dragger.Canvas = canvas;
@@ -246,7 +345,9 @@ namespace UIPluginDesigner
 
         private void AddElement(ElementType type)
         {
-            Debug.Log("AddElement: " + type);
+            Debug.Log("DesignerController: AddElement: " + type);
+            if (_elements == null) _elements = new List<ElementData>();
+
             var data = new ElementData
             {
                 Type = type,
@@ -269,36 +370,44 @@ namespace UIPluginDesigner
 
         private void SelectElement(ElementData data)
         {
+            Debug.Log("DesignerController: SelectElement " + (data != null ? data.Name : "null"));
             _selectedElement = data;
 
-            _inputName.InputField.SetTextWithoutNotify(data.Name);
-            _inputText.InputField.SetTextWithoutNotify(data.Text);
-            _inputX.InputField.SetTextWithoutNotify(data.AnchorPosX.ToString());
-            _inputY.InputField.SetTextWithoutNotify(data.AnchorPosY.ToString());
-            _inputW.InputField.SetTextWithoutNotify(data.SizeX.ToString());
-            _inputH.InputField.SetTextWithoutNotify(data.SizeY.ToString());
-            _inputFontSize.InputField.SetTextWithoutNotify(data.FontSize.ToString());
+            if (_inputName != null && _inputName.InputField != null) _inputName.InputField.SetTextWithoutNotify(data.Name);
+            if (_inputText != null && _inputText.InputField != null) _inputText.InputField.SetTextWithoutNotify(data.Text);
+            if (_inputX != null && _inputX.InputField != null) _inputX.InputField.SetTextWithoutNotify(data.AnchorPosX.ToString());
+            if (_inputY != null && _inputY.InputField != null) _inputY.InputField.SetTextWithoutNotify(data.AnchorPosY.ToString());
+            if (_inputW != null && _inputW.InputField != null) _inputW.InputField.SetTextWithoutNotify(data.SizeX.ToString());
+            if (_inputH != null && _inputH.InputField != null) _inputH.InputField.SetTextWithoutNotify(data.SizeY.ToString());
+            if (_inputFontSize != null && _inputFontSize.InputField != null) _inputFontSize.InputField.SetTextWithoutNotify(data.FontSize.ToString());
         }
 
         private void UpdateSelectedElement()
         {
             if (_selectedElement == null) return;
 
-            _selectedElement.Name = _inputName.InputField.text;
-            _selectedElement.Text = _inputText.InputField.text;
+            if (_inputName != null && _inputName.InputField != null) _selectedElement.Name = _inputName.InputField.text;
+            if (_inputText != null && _inputText.InputField != null) _selectedElement.Text = _inputText.InputField.text;
 
-            if (float.TryParse(_inputX.InputField.text, out float x)) _selectedElement.AnchorPosX = x;
-            if (float.TryParse(_inputY.InputField.text, out float y)) _selectedElement.AnchorPosY = y;
-            if (float.TryParse(_inputW.InputField.text, out float w)) _selectedElement.SizeX = w;
-            if (float.TryParse(_inputH.InputField.text, out float h)) _selectedElement.SizeY = h;
-            if (float.TryParse(_inputFontSize.InputField.text, out float f)) _selectedElement.FontSize = f;
+            if (_inputX != null && float.TryParse(_inputX.InputField.text, out float x)) _selectedElement.AnchorPosX = x;
+            if (_inputY != null && float.TryParse(_inputY.InputField.text, out float y)) _selectedElement.AnchorPosY = y;
+            if (_inputW != null && float.TryParse(_inputW.InputField.text, out float w)) _selectedElement.SizeX = w;
+            if (_inputH != null && float.TryParse(_inputH.InputField.text, out float h)) _selectedElement.SizeY = h;
+            if (_inputFontSize != null && float.TryParse(_inputFontSize.InputField.text, out float f)) _selectedElement.FontSize = f;
 
             RefreshPreview();
         }
 
         private void RefreshPreview()
         {
-            Debug.Log("RefreshPreview: Elements count = " + _elements.Count);
+            Debug.Log("DesignerController: RefreshPreview: Elements count = " + (_elements != null ? _elements.Count : 0));
+            
+            if (_previewMenuBg == null)
+            {
+                Debug.LogError("DesignerController: _previewMenuBg is null in RefreshPreview");
+                return;
+            }
+
             foreach (Transform child in _previewMenuBg.transform)
             {
                 Destroy(child.gameObject);
@@ -309,26 +418,27 @@ namespace UIPluginDesigner
             foreach (var el in _elements)
             {
                 GameObject obj = null;
+                // ... (rest of the loop)
                 switch (el.Type)
                 {
                     case ElementType.Button:
-                        var btn = Ui.AddButton(_previewMenuBg.transform, el.Name, el.Text, el.FontSize, el.SizeX, el.SizeY, 1, 1, el.AnchorPosX, el.AnchorPosY, () => SelectElement(el));
+                        var btn = Ui.AddButton(_previewMenuBg.transform, el.Name, el.Text, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, () => SelectElement(el));
                         obj = btn.gameObject;
                         break;
                     case ElementType.Label:
-                        var lbl = Ui.AddLabel(_previewMenuBg.transform, el.Name, el.Text, el.SizeX, el.SizeY, 1, 1, el.AnchorPosX, el.AnchorPosY, TextAlignmentOptions.Center, el.FontSize);
+                        var lbl = Ui.AddLabel(_previewMenuBg.transform, el.Name, el.Text, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, TextAlignmentOptions.Center, el.FontSize);
                         obj = lbl.Item1.gameObject;
                         break;
                     case ElementType.TextInput:
-                        var inp = Ui.AddTextInput(_previewMenuBg.transform, el.Name, el.Text, TextAlignmentOptions.Left, el.FontSize, el.SizeX, el.SizeY, 1, 1, el.AnchorPosX, el.AnchorPosY, (v) => { }, 0.5f, 0.5f);
+                        var inp = Ui.AddTextInput(_previewMenuBg.transform, el.Name, el.Text, TextAlignmentOptions.Left, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { }, 0.5f, 0.5f);
                         obj = inp.gameObject;
                         break;
                     case ElementType.Dropdown:
-                        var dd = Ui.AddDropdown(_previewMenuBg.transform, new List<string> { "Option A" }, 0, el.SizeX, el.SizeY, 1, 1, el.AnchorPosX, el.AnchorPosY, (v) => { });
+                        var dd = Ui.AddDropdown(_previewMenuBg.transform, new List<string> { "Option A" }, 0, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
                         obj = dd.gameObject;
                         break;
                     case ElementType.Checkbox:
-                        var tgl = Ui.AddCheckbox(_previewMenuBg.transform, true, el.SizeX, el.SizeY, 1, 1, el.AnchorPosX, el.AnchorPosY, (v) => { });
+                        var tgl = Ui.AddCheckbox(_previewMenuBg.transform, true, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
                         obj = tgl.gameObject;
                         break;
                 }
@@ -378,23 +488,26 @@ namespace UIPluginDesigner
             var path = StandaloneFileBrowser.SaveFilePanel("Save UI Layout", "", "layout", "json");
             if (string.IsNullOrEmpty(path)) return;
 
+            if (_previewMenuBg == null)
+            {
+                Debug.LogError("DesignerController: _previewMenuBg is null in SaveLayout");
+                return;
+            }
+
+            var rt = _previewMenuBg.GetComponent<RectTransform>();
+
             var root = new JSONObject();
-            root["MenuW"] = _previewMenuBg.GetComponent<RectTransform>().rect.width;
-            root["MenuH"] = _previewMenuBg.GetComponent<RectTransform>().rect.height;
+            root["PanelWidth"] = rt.rect.width;
+            root["PanelHeight"] = rt.rect.height;
+            root["PanelAnchorX"] = rt.anchorMin.x; // Assuming anchorMin == anchorMax for point anchor
+            root["PanelAnchorY"] = rt.anchorMin.y;
+            root["PanelPosX"] = rt.anchoredPosition.x;
+            root["PanelPosY"] = rt.anchoredPosition.y;
 
             var arr = new JSONArray();
             foreach (var el in _elements)
             {
-                var n = new JSONObject();
-                n["Type"] = el.Type.ToString();
-                n["Name"] = el.Name;
-                n["Text"] = el.Text;
-                n["AnchorPosX"] = el.AnchorPosX;
-                n["AnchorPosY"] = el.AnchorPosY;
-                n["SizeX"] = el.SizeX;
-                n["SizeY"] = el.SizeY;
-                n["FontSize"] = el.FontSize;
-                arr.Add(n);
+                arr.Add(el.ToJSON());
             }
             root["Elements"] = arr;
 
@@ -404,6 +517,7 @@ namespace UIPluginDesigner
 
         private void LoadLayout()
         {
+            Debug.Log("DesignerController: LoadLayout called");
             var paths = StandaloneFileBrowser.OpenFilePanel("Load UI Layout", "", "json", false);
             if (paths.Length == 0 || string.IsNullOrEmpty(paths[0])) return;
 
@@ -412,29 +526,36 @@ namespace UIPluginDesigner
 
             if (root != null)
             {
+                Debug.Log("DesignerController: Layout JSON parsed successfully");
                 _elements = new List<ElementData>();
                 var arr = root["Elements"].AsArray;
                 foreach (JSONNode n in arr)
                 {
-                    var el = new ElementData();
-                    if (Enum.TryParse(n["Type"].Value, out ElementType t))
-                        el.Type = t;
-                    else
-                        el.Type = ElementType.Button;
-
-                    el.Name = n["Name"].Value;
-                    el.Text = n["Text"].Value;
-                    el.AnchorPosX = n["AnchorPosX"].AsFloat;
-                    el.AnchorPosY = n["AnchorPosY"].AsFloat;
-                    el.SizeX = n["SizeX"].AsFloat;
-                    el.SizeY = n["SizeY"].AsFloat;
-                    el.FontSize = n["FontSize"].AsFloat;
-                    _elements.Add(el);
+                    _elements.Add(ElementData.FromJSON(n));
                 }
 
-                _inputMenuW.InputField.SetTextWithoutNotify(root["MenuW"].AsFloat.ToString());
-                _inputMenuH.InputField.SetTextWithoutNotify(root["MenuH"].AsFloat.ToString());
-                UpdateMenuSize();
+                // Load Panel Settings (Support both new and legacy keys if possible, or just new)
+                float w = root["PanelWidth"] != null ? root["PanelWidth"].AsFloat : (root["MenuW"] != null ? root["MenuW"].AsFloat : 250);
+                float h = root["PanelHeight"] != null ? root["PanelHeight"].AsFloat : (root["MenuH"] != null ? root["MenuH"].AsFloat : 190);
+                
+                float ax = root["PanelAnchorX"] != null ? root["PanelAnchorX"].AsFloat : 0.5f;
+                float ay = root["PanelAnchorY"] != null ? root["PanelAnchorY"].AsFloat : 0.5f;
+                float px = root["PanelPosX"] != null ? root["PanelPosX"].AsFloat : 0;
+                float py = root["PanelPosY"] != null ? root["PanelPosY"].AsFloat : 0;
+
+                // Update Preview BG
+                // Ui.MoveTransform handles anchoring and position
+                Ui.MoveTransform(_previewMenuBg.transform, w, h, ax, ay, px, py);
+
+                // Update Input Fields (Check for nulls)
+                if (_inputMenuW != null && _inputMenuW.InputField != null) _inputMenuW.InputField.SetTextWithoutNotify(w.ToString());
+                if (_inputMenuH != null && _inputMenuH.InputField != null) _inputMenuH.InputField.SetTextWithoutNotify(h.ToString());
+                if (_inputMenuX != null && _inputMenuX.InputField != null) _inputMenuX.InputField.SetTextWithoutNotify(px.ToString());
+                if (_inputMenuY != null && _inputMenuY.InputField != null) _inputMenuY.InputField.SetTextWithoutNotify(py.ToString());
+                if (_inputAnchorX != null && _inputAnchorX.InputField != null) _inputAnchorX.InputField.SetTextWithoutNotify(ax.ToString());
+                if (_inputAnchorY != null && _inputAnchorY.InputField != null) _inputAnchorY.InputField.SetTextWithoutNotify(ay.ToString());
+
+                UpdateMenuSize(); // Redundant since MoveTransform set it? But ensures logic consistency
                 RefreshPreview();
                 PersistentUI.Instance.DisplayMessage("Layout loaded!", PersistentUI.DisplayMessageType.Bottom);
             }
@@ -462,19 +583,19 @@ namespace UIPluginDesigner
                 switch (el.Type)
                 {
                     case ElementType.Button:
-                        sb.AppendLine($"    ui.AddButton(menu.transform, \"{el.Name}\", \"{el.Text}\", {f}, {w}, {h}, 1, 1, {x}, {y}, () => {{}}); // Note: Click handler is a placeholder");
+                        sb.AppendLine($"    ui.AddButton(menu.transform, \"{el.Name}\", \"{el.Text}\", {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, () => {{}}); // Note: Click handler is a placeholder");
                         break;
                     case ElementType.Label:
-                        sb.AppendLine($"    ui.AddLabel(menu.transform, \"{el.Name}\", \"{el.Text}\", {w}, {h}, 1, 1, {x}, {y}, TextAlignmentOptions.Center, {f}");
+                        sb.AppendLine($"    ui.AddLabel(menu.transform, \"{el.Name}\", \"{el.Text}\", {w}, {h}, 0.5f, 0.5f, {x}, {y}, TextAlignmentOptions.Center, {f}");
                         break;
                     case ElementType.TextInput:
-                        sb.AppendLine($"    ui.AddTextInput(menu.transform, \"{el.Name}\", \"{el.Text}\", TextAlignmentOptions.Left, {f}, {w}, {h}, 1, 1, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                        sb.AppendLine($"    ui.AddTextInput(menu.transform, \"{el.Name}\", \"{el.Text}\", TextAlignmentOptions.Left, {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
                         break;
                     case ElementType.Dropdown:
-                        sb.AppendLine($"    ui.AddDropdown(menu.transform, new List<string>(), 0, {w}, {h}, 1, 1, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                        sb.AppendLine($"    ui.AddDropdown(menu.transform, new List<string>(), 0, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
                         break;
                     case ElementType.Checkbox:
-                        sb.AppendLine($"    ui.AddCheckbox(menu.transform, true, {w}, {h}, 1, 1, {x}, {y}, (val) => {{}}); // Note: OnValueChanged handler is a placeholder");
+                        sb.AppendLine($"    ui.AddCheckbox(menu.transform, true, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnValueChanged handler is a placeholder");
                         break;
                 }
             }
@@ -484,19 +605,6 @@ namespace UIPluginDesigner
             PersistentUI.Instance.DisplayMessage("Code exported to file!", PersistentUI.DisplayMessageType.Bottom);
         }
 
-        [Serializable]
-        private class ElementData
-        {
-            public ElementType Type;
-            public string Name;
-            public string Text;
-            public float AnchorPosX, AnchorPosY;
-            public float SizeX, SizeY;
-            public float FontSize;
-        }
 
-
-
-        private enum ElementType { Button, Label, TextInput, Dropdown, Checkbox }
     }
 }

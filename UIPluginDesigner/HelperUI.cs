@@ -29,7 +29,7 @@ namespace UIPluginDesigner
         {
             var button = UnityEngine.Object.Instantiate(PersistentUI.Instance.ButtonPrefab, parent);
             button.name = name;
-            button.Button.onClick.AddListener(onClick);
+            if (onClick != null) button.Button.onClick.AddListener(onClick);
             button.SetText(text);
             button.Text.enableAutoSizing = false;
             button.Text.fontSize = fontSize;
@@ -61,7 +61,7 @@ namespace UIPluginDesigner
             textInput.InputField.onFocusSelectAll = false;
             textInput.InputField.textComponent.alignment = alignment;
             textInput.InputField.textComponent.fontSize = fontSize;
-            textInput.InputField.onValueChanged.AddListener(onChange);
+            if (onChange != null) textInput.InputField.onValueChanged.AddListener(onChange);
 
             textInput.InputField.onSelect.AddListener((_) => {
                 CMInputCallbackInstaller.DisableActionMaps(typeof(HelperUI), editActionMapsDisabled);
@@ -78,7 +78,7 @@ namespace UIPluginDesigner
         {
             var dropdown = UnityEngine.Object.Instantiate(PersistentUI.Instance.DropdownPrefab, parent);
             dropdown.SetOptions(options);
-            dropdown.Dropdown.onValueChanged.AddListener(onChange);
+            if (onChange != null) dropdown.Dropdown.onValueChanged.AddListener(onChange);
             dropdown.Dropdown.SetValueWithoutNotify(value);
             var image = dropdown.GetComponent<Image>();
             image.color = new Color(0.35f, 0.35f, 0.35f, 1f);
@@ -107,7 +107,7 @@ namespace UIPluginDesigner
 
             toggleComponent.isOn = value;
             toggleComponent.onValueChanged.RemoveAllListeners();
-            toggleComponent.onValueChanged.AddListener(onClick);
+            if (onClick != null) toggleComponent.onValueChanged.AddListener(onClick);
             MoveTransform(toggleComponent.transform, sizeX, sizeY, anchorX, anchorY, anchorPosX, anchorPosY, pivotX, pivotY);
             return toggleComponent;
         }

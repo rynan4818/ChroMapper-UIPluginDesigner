@@ -105,6 +105,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes.cs" />
     <Compile Include="DesignerController.cs" />
     <Compile Include="HelperUI.cs" />
     <Compile Include="Plugin.cs" />
@@ -112,6 +113,10 @@
     <Compile Include="SimpleDrag.cs" />
     <Compile Include="InputNumberAdjuster.cs" />
     <Compile Include="ElementDragHandler.cs" />
+    <Compile Include="UILayoutBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="editor_layout.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
