@@ -35,7 +35,6 @@ namespace UIPluginDesigner
 
         public void Start()
         {
-            Debug.Log("DesignerController: Start");
             if (Ui == null) Debug.LogError("DesignerController: Plugin.ui is null in Start!");
             CreateEditorPanel();
             CreatePreviewContainer();
@@ -43,7 +42,6 @@ namespace UIPluginDesigner
 
         public void OnDestroy()
         {
-            Debug.Log("DesignerController: OnDestroy");
             if (_editorPanel != null) Destroy(_editorPanel);
             if (_previewContainer != null) Destroy(_previewContainer);
         }
@@ -52,7 +50,6 @@ namespace UIPluginDesigner
         {
             var canvasGO = GameObject.Find("Canvas");
             if (canvasGO != null) return canvasGO.GetComponent<Canvas>();
-            Debug.LogWarning("DesignerController: Canvas object not found, finding via Type");
             return FindObjectOfType<Canvas>();
         }
 
@@ -83,7 +80,6 @@ namespace UIPluginDesigner
 
             if (!string.IsNullOrEmpty(json))
             {
-                Debug.Log("Loading Editor Layout from Embedded Resource");
                 var root = JSON.Parse(json);
 
                 _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
@@ -266,7 +262,6 @@ namespace UIPluginDesigner
 
         private void CreatePreviewContainer()
         {
-            Debug.Log("DesignerController: CreatePreviewContainer");
             var canvas = GetCanvas();
             if (canvas == null)
             {
@@ -288,8 +283,6 @@ namespace UIPluginDesigner
             Ui.AttachImage(_previewMenuBg, new Color(0.24f, 0.24f, 0.24f));
             Ui.MoveTransform(_previewMenuBg.transform, 250, 190, 0.5f, 0.5f, 70, 180);
             
-            Debug.Log("DesignerController: PreviewMenuBg created: " + (_previewMenuBg != null));
-
             var dragger = _previewMenuBg.AddComponent<ElementDragHandler>();
             dragger.Canvas = canvas;
             dragger.OnDragDelta = (delta) =>
@@ -345,7 +338,6 @@ namespace UIPluginDesigner
 
         private void AddElement(ElementType type)
         {
-            Debug.Log("DesignerController: AddElement: " + type);
             if (_elements == null) _elements = new List<ElementData>();
 
             var data = new ElementData
@@ -370,7 +362,6 @@ namespace UIPluginDesigner
 
         private void SelectElement(ElementData data)
         {
-            Debug.Log("DesignerController: SelectElement " + (data != null ? data.Name : "null"));
             _selectedElement = data;
 
             if (_inputName != null && _inputName.InputField != null) _inputName.InputField.SetTextWithoutNotify(data.Name);
@@ -400,8 +391,6 @@ namespace UIPluginDesigner
 
         private void RefreshPreview()
         {
-            Debug.Log("DesignerController: RefreshPreview: Elements count = " + (_elements != null ? _elements.Count : 0));
-            
             if (_previewMenuBg == null)
             {
                 Debug.LogError("DesignerController: _previewMenuBg is null in RefreshPreview");
@@ -490,7 +479,6 @@ namespace UIPluginDesigner
 
             if (_previewMenuBg == null)
             {
-                Debug.LogError("DesignerController: _previewMenuBg is null in SaveLayout");
                 return;
             }
 
@@ -517,7 +505,6 @@ namespace UIPluginDesigner
 
         private void LoadLayout()
         {
-            Debug.Log("DesignerController: LoadLayout called");
             var paths = StandaloneFileBrowser.OpenFilePanel("Load UI Layout", "", "json", false);
             if (paths.Length == 0 || string.IsNullOrEmpty(paths[0])) return;
 
@@ -526,7 +513,6 @@ namespace UIPluginDesigner
 
             if (root != null)
             {
-                Debug.Log("DesignerController: Layout JSON parsed successfully");
                 _elements = new List<ElementData>();
                 var arr = root["Elements"].AsArray;
                 foreach (JSONNode n in arr)
