@@ -7,8 +7,8 @@
     <ProjectGuid>{9E4A0DDB-2F5B-49DD-B7D6-2EBB48132ADB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UIPluginDesigner</RootNamespace>
-    <AssemblyName>UIPluginDesigner</AssemblyName>
+    <RootNamespace>ChroMapper_UIPluginDesigner</RootNamespace>
+    <AssemblyName>ChroMapper-UIPluginDesigner</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public class InputNumberAdjuster : MonoBehaviour
     {

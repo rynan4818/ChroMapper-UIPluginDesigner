@@ -5,7 +5,7 @@ using SFB;
 using SimpleJSON;
 using UnityEngine;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public class LayoutFileManager
     {

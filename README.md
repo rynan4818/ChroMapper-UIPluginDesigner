@@ -1,6 +1,6 @@
-# UIPluginDesigner 取扱説明書
+# ChroMapper-UIPluginDesigner 取扱説明書
 
-**UIPluginDesigner** は、ChroMapper用プラグインのUI（Menuパネル）を視覚的にデザインし、C#コードまたはJSONレイアウトとして出力するためのツールです。
+**ChroMapper-UIPluginDesigner** は、ChroMapper用プラグインのUI（Menuパネル）を視覚的にデザインし、C#コードまたはJSONレイアウトとして出力するためのツールです。
 
 ## 主な機能
 
@@ -16,14 +16,14 @@
 デザインしたUIをC#のコードとして出力し、自分のプラグインに組み込む方法です。
 
 ### 手順
-1.  UIPluginDesignerでUIを作成します。
+1.  ChroMapper-UIPluginDesignerでUIを作成します。
 2.  **[Export]** ボタンを押します。
 3.  `.txt` ファイルが保存されるので、その中身（`CreateUI` メソッド）をコピーします。
 
 ### 必要な準備
-出力されたコードを動作させるには、UIPluginDesignerのソースコードに含まれる `HelperUI.cs` があなたのプロジェクトに必要です。
+出力されたコードを動作させるには、ChroMapper-UIPluginDesignerのソースコードに含まれる `HelperUI.cs` があなたのプロジェクトに必要です。
 
-1.  `UIPluginDesigner` のソースから **`HelperUI.cs`** をあなたのプロジェクトにコピーします。
+1.  `ChroMapper-UIPluginDesigner` のソースから **`HelperUI.cs`** をあなたのプロジェクトにコピーします。
 2.  以下のテンプレートを使ってプラグインのUIクラスを作成します。
 
 ### 実装テンプレート (C#)
@@ -54,7 +54,7 @@ namespace MyPlugin
             var menuObj = new GameObject("MyPluginMenu", typeof(RectTransform));
             menuObj.transform.SetParent(canvas.transform, false);
             
-            // 背景やサイズの設定 (UIPluginDesignerで作ったパネル設定に合わせて調整)
+            // 背景やサイズの設定 (ChroMapper-UIPluginDesignerで作ったパネル設定に合わせて調整)
             _ui.AttachImage(menuObj, new Color(0.24f, 0.24f, 0.24f, 0.95f));
             _ui.MoveTransform(menuObj.transform, 250, 190, 0.5f, 0.5f, 0, 0); // 幅, 高さ, AnchorX, Y, PosX, Y
 
@@ -79,15 +79,15 @@ namespace MyPlugin
 
 ## 2. JSONレイアウトを埋め込みリソースとして利用する方法
 
-UIPluginDesigner自身が行っているように、レイアウトをJSONファイルとして保存し、それをDLLに埋め込んで実行時に読み込む方法です。コードを書き換えることなくUIの配置を変更できるようになります。
+ChroMapper-UIPluginDesigner自身が行っているように、レイアウトをJSONファイルとして保存し、それをDLLに埋め込んで実行時に読み込む方法です。コードを書き換えることなくUIの配置を変更できるようになります。
 
 ### 手順
-1.  UIPluginDesignerでUIを作成し、**[Save]** ボタンでJSONファイル（例: `layout.json`）を保存します。
+1.  ChroMapper-UIPluginDesignerでUIを作成し、**[Save]** ボタンでJSONファイル（例: `layout.json`）を保存します。
 2.  そのJSONファイルをVisual Studioのプロジェクトに追加します。
 3.  追加したJSONファイルのプロパティを開き、**「ビルドアクション」を `埋め込みリソース (Embedded Resource)`** に設定します。
 
 ### 必要な準備
-JSONを解析してUIを構築するために、以下のファイル（UIPluginDesignerのソースコード）をあなたのプロジェクトにコピーしてください。
+JSONを解析してUIを構築するために、以下のファイル（ChroMapper-UIPluginDesignerのソースコード）をあなたのプロジェクトにコピーしてください。
 
 *   **`DataTypes.cs`** (データ構造定義)
 *   **`UILayoutBuilder.cs`** (JSONからUIを作るクラス)
@@ -100,7 +100,7 @@ JSONを解析してUIを構築するために、以下のファイル（UIPlugin
 `UIConstants.cs` はすべてコピーするのではなく、JSON読み込みに必要な定数のみを含む以下のクラスをプロジェクト内に作成してください。
 
 ```csharp
-namespace UIPluginDesigner // あなたのプロジェクトの名前空間に合わせてください
+namespace ChroMapper_UIPluginDesigner // あなたのプロジェクトの名前空間に合わせてください
 {
     public static class UIConstants
     {
@@ -179,7 +179,7 @@ namespace MyPlugin
             _ui.AttachImage(_menuPanel, new Color(0.24f, 0.24f, 0.24f, 0.95f));
 
             // パネルのサイズ・位置をJSONから適用
-            // (UIPluginDesignerの保存形式に準拠)
+            // (ChroMapper-UIPluginDesignerの保存形式に準拠)
             float w = root[UIConstants.KeyPanelWidth].AsFloat;
             float h = root[UIConstants.KeyPanelHeight].AsFloat;
             float ax = root[UIConstants.KeyPanelAnchorX] != null ? root[UIConstants.KeyPanelAnchorX].AsFloat : 0.5f;
@@ -206,7 +206,7 @@ namespace MyPlugin
             }
 
             // 例: "InputName" という名前の入力欄の値を取得
-            var inputName = builder.Get<UIPluginDesigner.UITextInput>("InputName");
+            var inputName = builder.Get<ChroMapper_UIPluginDesigner.UITextInput>("InputName");
             if (inputName != null)
             {
                 inputName.InputField.onValueChanged.AddListener((val) => {
@@ -220,4 +220,4 @@ namespace MyPlugin
 
 ### ヒント
 *   **リソース名がわからない場合**: `assembly.GetManifestResourceNames()` を `foreach` で回してログ出力すると、正しいリソース名を確認できます。
-*   **HelperUI等の名前空間**: コピーしてきたファイルの `namespace UIPluginDesigner` は、あなたのプロジェクトの名前空間に変更することをお勧めします。
+*   **HelperUI等の名前空間**: コピーしてきたファイルの `namespace ChroMapper_UIPluginDesigner` は、あなたのプロジェクトの名前空間に変更することをお勧めします。

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public class PreviewManager
     {

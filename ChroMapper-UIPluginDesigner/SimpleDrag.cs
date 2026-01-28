@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public class SimpleDrag : MonoBehaviour, IDragHandler
     {

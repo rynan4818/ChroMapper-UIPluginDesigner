@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public class UILayoutBuilder
     {

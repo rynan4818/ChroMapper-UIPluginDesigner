@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     [Plugin("SongDataChanger Style Designer")]
     public class Plugin

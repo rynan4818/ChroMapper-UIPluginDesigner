@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using System;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     // --- Helper UI Class (Mimicking ChroMapper-SongDataChanger/UserInterface/UI.cs) ---
     public class HelperUI : MonoBehaviour

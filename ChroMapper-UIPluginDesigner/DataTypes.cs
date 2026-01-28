@@ -1,7 +1,7 @@
 using System;
 using SimpleJSON;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public enum ElementType { Button, Label, TextInput, Dropdown, Checkbox }
 

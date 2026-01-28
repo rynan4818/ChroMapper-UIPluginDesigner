@@ -9,7 +9,7 @@ using System.IO;
 using System;
 using SimpleJSON;
 
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     // --- Main Designer Logic (Mimicking MenuUI behavior logic but for editing) ---
 
@@ -71,7 +71,7 @@ namespace UIPluginDesigner
 
             // Load Layout from Embedded Resource
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var resourceName = "UIPluginDesigner.editor_layout.json";
+            var resourceName = "ChroMapper_UIPluginDesigner.editor_layout.json";
 
             string json = null;
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))

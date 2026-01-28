@@ -1,4 +1,4 @@
-namespace UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner
 {
     public static class UIConstants
     {
