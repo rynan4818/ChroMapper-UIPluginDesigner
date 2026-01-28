@@ -95,10 +95,6 @@
       <HintPath>$(ChroMapperDir)\ChroMapper_Data\Managed\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(ChroMapperDir)\ChroMapper_Data\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

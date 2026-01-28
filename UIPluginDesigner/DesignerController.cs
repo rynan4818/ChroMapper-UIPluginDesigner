@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using SFB;
 using System.IO;
 using System;
-using Newtonsoft.Json;
+using SimpleJSON;
 
 namespace UIPluginDesigner
 {
@@ -31,14 +31,14 @@ namespace UIPluginDesigner
         private UITextInput _inputFontSize;
         private UITextInput _inputMenuW, _inputMenuH, _inputMenuX, _inputMenuY;
 
-        private void Start()
+        public void Start()
         {
             Debug.Log("DesignerController: Start");
             CreateEditorPanel();
             CreatePreviewContainer();
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             Debug.Log("DesignerController: OnDestroy");
             if (_editorPanel != null) Destroy(_editorPanel);
@@ -378,15 +378,27 @@ namespace UIPluginDesigner
             var path = StandaloneFileBrowser.SaveFilePanel("Save UI Layout", "", "layout", "json");
             if (string.IsNullOrEmpty(path)) return;
 
-            var data = new LayoutData
-            {
-                MenuW = _previewMenuBg.GetComponent<RectTransform>().rect.width,
-                MenuH = _previewMenuBg.GetComponent<RectTransform>().rect.height,
-                Elements = _elements
-            };
+            var root = new JSONObject();
+            root["MenuW"] = _previewMenuBg.GetComponent<RectTransform>().rect.width;
+            root["MenuH"] = _previewMenuBg.GetComponent<RectTransform>().rect.height;
 
-            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-            File.WriteAllText(path, json);
+            var arr = new JSONArray();
+            foreach (var el in _elements)
+            {
+                var n = new JSONObject();
+                n["Type"] = el.Type.ToString();
+                n["Name"] = el.Name;
+                n["Text"] = el.Text;
+                n["AnchorPosX"] = el.AnchorPosX;
+                n["AnchorPosY"] = el.AnchorPosY;
+                n["SizeX"] = el.SizeX;
+                n["SizeY"] = el.SizeY;
+                n["FontSize"] = el.FontSize;
+                arr.Add(n);
+            }
+            root["Elements"] = arr;
+
+            File.WriteAllText(path, root.ToString(4));
             PersistentUI.Instance.DisplayMessage("Layout saved!", PersistentUI.DisplayMessageType.Bottom);
         }
 
@@ -396,13 +408,32 @@ namespace UIPluginDesigner
             if (paths.Length == 0 || string.IsNullOrEmpty(paths[0])) return;
 
             string json = File.ReadAllText(paths[0]);
-            var data = JsonConvert.DeserializeObject<LayoutData>(json);
+            var root = JSON.Parse(json);
 
-            if (data != null)
+            if (root != null)
             {
-                _elements = data.Elements;
-                _inputMenuW.InputField.SetTextWithoutNotify(data.MenuW.ToString());
-                _inputMenuH.InputField.SetTextWithoutNotify(data.MenuH.ToString());
+                _elements = new List<ElementData>();
+                var arr = root["Elements"].AsArray;
+                foreach (JSONNode n in arr)
+                {
+                    var el = new ElementData();
+                    if (Enum.TryParse(n["Type"].Value, out ElementType t))
+                        el.Type = t;
+                    else
+                        el.Type = ElementType.Button;
+
+                    el.Name = n["Name"].Value;
+                    el.Text = n["Text"].Value;
+                    el.AnchorPosX = n["AnchorPosX"].AsFloat;
+                    el.AnchorPosY = n["AnchorPosY"].AsFloat;
+                    el.SizeX = n["SizeX"].AsFloat;
+                    el.SizeY = n["SizeY"].AsFloat;
+                    el.FontSize = n["FontSize"].AsFloat;
+                    _elements.Add(el);
+                }
+
+                _inputMenuW.InputField.SetTextWithoutNotify(root["MenuW"].AsFloat.ToString());
+                _inputMenuH.InputField.SetTextWithoutNotify(root["MenuH"].AsFloat.ToString());
                 UpdateMenuSize();
                 RefreshPreview();
                 PersistentUI.Instance.DisplayMessage("Layout loaded!", PersistentUI.DisplayMessageType.Bottom);
@@ -464,12 +495,7 @@ namespace UIPluginDesigner
             public float FontSize;
         }
 
-        [Serializable]
-        private class LayoutData
-        {
-            public float MenuW, MenuH;
-            public List<ElementData> Elements;
-        }
+
 
         private enum ElementType { Button, Label, TextInput, Dropdown, Checkbox }
     }
