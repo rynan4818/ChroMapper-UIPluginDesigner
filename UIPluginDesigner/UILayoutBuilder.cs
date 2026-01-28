@@ -21,7 +21,7 @@ namespace UIPluginDesigner
 
         public Dictionary<string, GameObject> Build(JSONNode root)
         {
-            var arr = root["Elements"].AsArray;
+            var arr = root[UIConstants.KeyElements].AsArray;
             foreach (JSONNode n in arr)
             {
                 var data = ElementData.FromJSON(n);
