@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ChroMapper-UIPluginDesigner")]
-[assembly: AssemblyCopyright("Copyright ©  2026")]
+[assembly: AssemblyCopyright("Copyright ©  2026 Rynan4818")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

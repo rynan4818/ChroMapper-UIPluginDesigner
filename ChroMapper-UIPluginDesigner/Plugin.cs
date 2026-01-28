@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace ChroMapper_UIPluginDesigner
 {
-    [Plugin("SongDataChanger Style Designer")]
+    [Plugin("UIPluginDesigner")]
     public class Plugin
     {
         public static HelperUI ui;
@@ -14,13 +14,13 @@ namespace ChroMapper_UIPluginDesigner
         public void Init()
         {
             // 常駐するHelperUI（実アプリのUIクラス相当）を初期化
-            ui = new GameObject("SDC_Designer_UI").AddComponent<HelperUI>();
+            ui = new GameObject("UIPluginDesigner_UI").AddComponent<HelperUI>();
             GameObject.DontDestroyOnLoad(ui.gameObject);
 
             // 拡張ボタンの登録
             _extensionBtn = new ExtensionButton
             {
-                Tooltip = "SDC Designer",
+                Tooltip = "UIPluginDesigner",
                 Click = ToggleDesigner
             };
             // アイコンは省略(null)または適当なSpriteを設定
@@ -69,7 +69,7 @@ namespace ChroMapper_UIPluginDesigner
             }
             else
             {
-                var go = new GameObject("SDC_Designer_Controller");
+                var go = new GameObject("UIPluginDesigner_Controller");
                 designerController = go.AddComponent<DesignerController>();
             }
         }
