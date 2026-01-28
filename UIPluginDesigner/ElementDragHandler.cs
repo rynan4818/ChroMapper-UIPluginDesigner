@@ -1,0 +1,37 @@
+using UnityEngine;
+using UnityEngine.EventSystems;
+using System;
+
+namespace UIPluginDesigner
+{
+    public class ElementDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
+    {
+        public Action<Vector2> OnDragDelta;
+        public Action OnDragEnd;
+        public Canvas Canvas;
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (OnDragDelta != null)
+            {
+                var parentRT = transform.parent as RectTransform;
+                if (parentRT == null) return;
+
+                Vector2 localPos;
+                Vector2 prevLocalPos;
+                Camera cam = eventData.pressEventCamera;
+
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRT, eventData.position, cam, out localPos) &&
+                    RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRT, eventData.position - eventData.delta, cam, out prevLocalPos))
+                {
+                    OnDragDelta(localPos - prevLocalPos);
+                }
+            }
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            OnDragEnd?.Invoke();
+        }
+    }
+}
