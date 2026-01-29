@@ -1,9 +1,10 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.Components
 {
-    public class InputNumberAdjuster : MonoBehaviour
+    public class InputNumberAdjuster : MonoBehaviour, IScrollHandler
     {
         public TMP_InputField InputField;
         public float Increment = 1.0f;

@@ -4,8 +4,9 @@ using System.Text;
 using SFB;
 using SimpleJSON;
 using UnityEngine;
+using ChroMapper_UIPluginDesigner.UserResources;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.Controllers
 {
     public class LayoutFileManager
     {
@@ -15,19 +16,19 @@ namespace ChroMapper_UIPluginDesigner
             if (string.IsNullOrEmpty(path)) return;
 
             var root = new JSONObject();
-            root[UIConstants.KeyPanelWidth] = panelRect.rect.width;
-            root[UIConstants.KeyPanelHeight] = panelRect.rect.height;
-            root[UIConstants.KeyPanelAnchorX] = panelRect.anchorMin.x;
-            root[UIConstants.KeyPanelAnchorY] = panelRect.anchorMin.y;
-            root[UIConstants.KeyPanelPosX] = panelRect.anchoredPosition.x;
-            root[UIConstants.KeyPanelPosY] = panelRect.anchoredPosition.y;
+            root[UILayoutMap.KeyPanelWidth] = panelRect.rect.width;
+            root[UILayoutMap.KeyPanelHeight] = panelRect.rect.height;
+            root[UILayoutMap.KeyPanelAnchorX] = panelRect.anchorMin.x;
+            root[UILayoutMap.KeyPanelAnchorY] = panelRect.anchorMin.y;
+            root[UILayoutMap.KeyPanelPosX] = panelRect.anchoredPosition.x;
+            root[UILayoutMap.KeyPanelPosY] = panelRect.anchoredPosition.y;
 
             var arr = new JSONArray();
             foreach (var el in elements)
             {
                 arr.Add(el.ToJSON());
             }
-            root[UIConstants.KeyElements] = arr;
+            root[UILayoutMap.KeyElements] = arr;
 
             File.WriteAllText(path, root.ToString(4));
             PersistentUI.Instance.DisplayMessage("Layout saved!", PersistentUI.DisplayMessageType.Bottom);

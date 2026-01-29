@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.UserResources
 {
     public class UILayoutBuilder
     {
@@ -21,7 +21,7 @@ namespace ChroMapper_UIPluginDesigner
 
         public Dictionary<string, GameObject> Build(JSONNode root)
         {
-            var arr = root[UIConstants.KeyElements].AsArray;
+            var arr = root[UILayoutMap.KeyElements].AsArray;
             foreach (JSONNode n in arr)
             {
                 var data = ElementData.FromJSON(n);

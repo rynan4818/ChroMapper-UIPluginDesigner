@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.Controllers
 {
     public static class TemplateManager
     {

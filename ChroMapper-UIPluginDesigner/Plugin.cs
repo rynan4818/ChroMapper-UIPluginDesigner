@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using ChroMapper_UIPluginDesigner.Controllers;
+using ChroMapper_UIPluginDesigner.UserResources;
 
 namespace ChroMapper_UIPluginDesigner
 {

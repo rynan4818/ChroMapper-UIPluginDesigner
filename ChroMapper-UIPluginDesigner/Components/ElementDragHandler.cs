@@ -1,10 +1,9 @@
-using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using System;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.Components
 {
-    public class ElementDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
+    public class ElementDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public Action<Vector2> OnDragDelta;
         public Action<PointerEventData> OnDragEnd;

@@ -78,6 +78,7 @@
 
 1.  `ChroMapper-UIPluginDesigner` のソースから **最新の `HelperUI.cs`** をあなたのプロジェクトにコピーします。
     *   **注意**: SliderやImage、ScrollRect機能などの追加に伴い、`HelperUI.cs` に新しいメソッド（`AddSlider`, `AttachSimpleImage` など）が追加されています。古いバージョンをお使いの場合は更新してください。
+    *   **名前空間**: コピーしたファイルの名前空間 (`namespace ChroMapper_UIPluginDesigner.UserResources`) は、あなたのプロジェクトに合わせて適宜変更してください。
 2.  以下のテンプレートを使ってプラグインのUIクラスを作成します。
 
 ### 実装テンプレート (C#)
@@ -145,14 +146,15 @@ ChroMapper-UIPluginDesigner自身が行っているように、レイアウト�
 3.  追加したJSONファイルのプロパティを開き、**「ビルドアクション」を `埋め込みリソース (Embedded Resource)`** に設定します。
 
 ### 必要な準備
-JSONを解析してUIを構築するために、以下のファイル（ChroMapper-UIPluginDesignerのソースコード）をあなたのプロジェクトにコピーしてください。
+JSONを解析してUIを構築するために、以下のファイル（ChroMapper-UIPluginDesignerのソースコードの **`UserResources`** フォルダに含まれるもの）をあなたのプロジェクトにコピーしてください。
 
 *   **`DataTypes.cs`** (データ構造定義)
 *   **`UILayoutBuilder.cs`** (JSONからUIを作るクラス)
 *   **`HelperUI.cs`** (UI生成ヘルパー)
-*   **`UIConstants.cs`** (キー定数定義)
+*   **`UILayoutMap.cs`** (キー定数定義)
 
-※ `UIConstants.cs` はJSONのキー定義を含むため、すべてコピーするか、必要な部分を抽出して利用してください。
+※ `UILayoutMap.cs` はJSONのキー定義を含むため、すべてコピーするか、必要な部分を抽出して利用してください。
+※ コピーしたファイルの名前空間 (`namespace ChroMapper_UIPluginDesigner.UserResources`) は、あなたのプロジェクトに合わせて適宜変更してください。
 
 #### 参照の追加
 *   **`Plugins.dll`**: ChroMapperのインストールフォルダに含まれる `Plugins.dll` を参照に追加してください（`SimpleJSON` を利用するため）。

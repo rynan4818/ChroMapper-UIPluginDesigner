@@ -4,8 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using ChroMapper_UIPluginDesigner.UserResources;
 
-namespace ChroMapper_UIPluginDesigner
+namespace ChroMapper_UIPluginDesigner.Components
 {
     public class PreviewManager
     {

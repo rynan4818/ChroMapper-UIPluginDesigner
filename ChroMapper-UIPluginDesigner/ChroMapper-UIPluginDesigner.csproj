@@ -105,21 +105,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTypes.cs" />
-    <Compile Include="DesignerController.cs" />
-    <Compile Include="UIConstants.cs" />
-    <Compile Include="HelperUI.cs" />
-    <Compile Include="LayoutFileManager.cs" />
-    <Compile Include="PreviewManager.cs" />
+    <Compile Include="UserResources\DataTypes.cs" />
+    <Compile Include="Controllers\DesignerController.cs" />
+    <Compile Include="UserResources\UILayoutMap.cs" />
+    <Compile Include="UserResources\HelperUI.cs" />
+    <Compile Include="Controllers\LayoutFileManager.cs" />
+    <Compile Include="Components\PreviewManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleDrag.cs" />
-    <Compile Include="InputNumberAdjuster.cs" />
-    <Compile Include="ElementDragHandler.cs" />
-    <Compile Include="UILayoutBuilder.cs" />
+    <Compile Include="Components\SimpleDrag.cs" />
+    <Compile Include="Components\InputNumberAdjuster.cs" />
+    <Compile Include="Components\ElementDragHandler.cs" />
+    <Compile Include="UserResources\UILayoutBuilder.cs" />
+    <Compile Include="Controllers\InspectorController.cs" />
+    <Compile Include="Controllers\TemplateManager.cs" />
+    <Compile Include="Constants\DesignerConstants.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="editor_layout.json" />
+    <EmbeddedResource Include="Resources\editor_layout.json" />
     <EmbeddedResource Include="Templates\**" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
