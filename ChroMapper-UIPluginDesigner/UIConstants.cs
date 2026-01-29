@@ -31,6 +31,12 @@ namespace ChroMapper_UIPluginDesigner
         public const string KeyChildControlHeight = "ChildControlHeight";
         public const string KeyChildForceExpandWidth = "ChildForceExpandWidth";
         public const string KeyChildForceExpandHeight = "ChildForceExpandHeight";
+        public const string KeyScrollSensitivity = "ScrollSensitivity";
+        public const string KeyScrollVisibility = "ScrollVisibility";
+        public const string KeyMinValue = "MinValue";
+        public const string KeyMaxValue = "MaxValue";
+        public const string KeyIsInteger = "IsInteger";
+        public const string KeyHexColor = "HexColor";
 
         // UI Element Names (Match editor_layout.json)
         public const string NameAddButton = "AddButton";
@@ -38,8 +44,12 @@ namespace ChroMapper_UIPluginDesigner
         public const string NameAddInput = "AddInput";
         public const string NameAddDropdown = "AddDropdown";
         public const string NameAddCheckbox = "AddCheckbox";
+        public const string NameAddSlider = "AddSlider";
+        public const string NameAddImage = "AddImage";
+        public const string NameAddRadioButton = "AddRadioButton";
         public const string NameAddVerticalLayout = "AddVerticalLayout";
         public const string NameAddHorizontalLayout = "AddHorizontalLayout";
+        public const string NameAddScrollRect = "AddScrollRect";
 
         public const string NameHierarchyDropdown = "HierarchyDropdown";
         public const string NamePathLabel = "PathLabel";
@@ -58,6 +68,13 @@ namespace ChroMapper_UIPluginDesigner
         public const string NameChC_H = "ChC_H";
         public const string NameChF_W = "ChF_W";
         public const string NameChF_H = "ChF_H";
+
+        public const string NameScrollSensitivity = "ScrollSens";
+        public const string NameScrollVisibility = "ScrollVis";
+        public const string NameMinValue = "MinV";
+        public const string NameMaxValue = "MaxV";
+        public const string NameIsInteger = "IsInt";
+        public const string NameHexColor = "HexColor";
 
         public const string NameMenuW = "MenuW";
         public const string NameMenuH = "MenuH";

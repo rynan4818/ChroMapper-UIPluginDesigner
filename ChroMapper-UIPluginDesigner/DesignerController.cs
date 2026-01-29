@@ -33,13 +33,83 @@ namespace ChroMapper_UIPluginDesigner
                 private UITextInput _inputMenuW, _inputMenuH, _inputMenuX, _inputMenuY;
                 private UITextInput _inputAnchorX, _inputAnchorY;
         
-                        // Layout Inspector Inputs
-                        private UITextInput _inputPadL, _inputPadR, _inputPadT, _inputPadB;
-                        private UITextInput _inputSpacing;
-                        private UIDropdown _inputChildAlignment;
-                        private Toggle _tglChCW, _tglChCH, _tglChFW, _tglChFH;
-                        private List<GameObject> _layoutInspectorObjects = new List<GameObject>();
-                        private List<GameObject> _normalInspectorObjects = new List<GameObject>();        
+                                        // Layout Inspector Inputs
+        
+                                        private UITextInput _inputPadL, _inputPadR, _inputPadT, _inputPadB;
+        
+                                        private UITextInput _inputSpacing;
+        
+                                        private UIDropdown _inputChildAlignment;
+        
+                                        private Toggle _tglChCW, _tglChCH, _tglChFW, _tglChFH;
+        
+                                        
+        
+                                                        // ScrollRect Inputs
+        
+                                        
+        
+                                                        private UITextInput _inputScrollSens;
+        
+                                        
+        
+                                                        private UIDropdown _inputScrollVis;
+        
+                                        
+        
+                                                        private List<GameObject> _scrollInspectorObjects = new List<GameObject>();
+        
+                                        
+        
+                                        
+        
+                                        
+        
+                                                        // Slider Inputs
+        
+                                        
+        
+                                                        private UITextInput _inputMinV, _inputMaxV;
+        
+                                        
+        
+                                                        private Toggle _tglIsInt;
+        
+                                        
+        
+                                                        private List<GameObject> _sliderInspectorObjects = new List<GameObject>();
+        
+                                        
+        
+                                        
+        
+                                        
+        
+                                                        // Image Inputs
+        
+                                        
+        
+                                                        private UITextInput _inputHexColor;
+        
+                                        
+        
+                                                        private List<GameObject> _imageInspectorObjects = new List<GameObject>();
+        
+                                        
+        
+                                        
+        
+                                        
+        
+                                                        private List<GameObject> _layoutInspectorObjects = new List<GameObject>();
+        
+                                        
+        
+                                        
+        
+                                        private List<GameObject> _normalInspectorObjects = new List<GameObject>();        
+        
+                                
                 private TextMeshProUGUI _pathLabel;
                 private UIDropdown _hierarchyDropdown;
                 private List<ElementData> _flatHierarchyList = new List<ElementData>();
@@ -67,13 +137,19 @@ namespace ChroMapper_UIPluginDesigner
                     if (builder.GetObject(UIConstants.NameAddButton) != null) builder.Get<Button>(UIConstants.NameAddButton).onClick.AddListener(() => AddElement(ElementType.Button));
                     if (builder.GetObject(UIConstants.NameAddLabel) != null) builder.Get<Button>(UIConstants.NameAddLabel).onClick.AddListener(() => AddElement(ElementType.Label));
                     if (builder.GetObject(UIConstants.NameAddInput) != null) builder.Get<Button>(UIConstants.NameAddInput).onClick.AddListener(() => AddElement(ElementType.TextInput));
-                    if (builder.GetObject(UIConstants.NameAddDropdown) != null) builder.Get<Button>(UIConstants.NameAddDropdown).onClick.AddListener(() => AddElement(ElementType.Dropdown));
-                    if (builder.GetObject(UIConstants.NameAddCheckbox) != null) builder.Get<Button>(UIConstants.NameAddCheckbox).onClick.AddListener(() => AddElement(ElementType.Checkbox));
-                    if (builder.GetObject(UIConstants.NameAddVerticalLayout) != null) builder.Get<Button>(UIConstants.NameAddVerticalLayout).onClick.AddListener(() => AddElement(ElementType.VerticalLayout));
-                    if (builder.GetObject(UIConstants.NameAddHorizontalLayout) != null) builder.Get<Button>(UIConstants.NameAddHorizontalLayout).onClick.AddListener(() => AddElement(ElementType.HorizontalLayout));
-        
-                    // Actions
-                    if (builder.GetObject(UIConstants.NameSave) != null) builder.Get<Button>(UIConstants.NameSave).onClick.AddListener(SaveLayout);
+                                        if (builder.GetObject(UIConstants.NameAddDropdown) != null) builder.Get<Button>(UIConstants.NameAddDropdown).onClick.AddListener(() => AddElement(ElementType.Dropdown));
+                                        if (builder.GetObject(UIConstants.NameAddCheckbox) != null) builder.Get<Button>(UIConstants.NameAddCheckbox).onClick.AddListener(() => AddElement(ElementType.Checkbox));
+                                        if (builder.GetObject(UIConstants.NameAddSlider) != null) builder.Get<Button>(UIConstants.NameAddSlider).onClick.AddListener(() => AddElement(ElementType.Slider));
+                                        if (builder.GetObject(UIConstants.NameAddImage) != null) builder.Get<Button>(UIConstants.NameAddImage).onClick.AddListener(() => AddElement(ElementType.Image));
+                                        if (builder.GetObject(UIConstants.NameAddRadioButton) != null) builder.Get<Button>(UIConstants.NameAddRadioButton).onClick.AddListener(() => AddElement(ElementType.RadioButton));
+                                        if (builder.GetObject(UIConstants.NameAddVerticalLayout) != null) builder.Get<Button>(UIConstants.NameAddVerticalLayout).onClick.AddListener(() => AddElement(ElementType.VerticalLayout));
+                    
+                                if (builder.GetObject(UIConstants.NameAddHorizontalLayout) != null) builder.Get<Button>(UIConstants.NameAddHorizontalLayout).onClick.AddListener(() => AddElement(ElementType.HorizontalLayout));
+                                if (builder.GetObject(UIConstants.NameAddScrollRect) != null) builder.Get<Button>(UIConstants.NameAddScrollRect).onClick.AddListener(() => AddElement(ElementType.ScrollRect));
+                    
+                                // Actions
+                                if (builder.GetObject(UIConstants.NameSave) != null) builder.Get<Button>(UIConstants.NameSave).onClick.AddListener(SaveLayout);
+                    
                     if (builder.GetObject(UIConstants.NameLoad) != null) builder.Get<Button>(UIConstants.NameLoad).onClick.AddListener(LoadLayout);
                     if (builder.GetObject(UIConstants.NameExport) != null) builder.Get<Button>(UIConstants.NameExport).onClick.AddListener(ExportCode);
                     if (builder.GetObject(UIConstants.NameClose) != null) builder.Get<Button>(UIConstants.NameClose).onClick.AddListener(() => Destroy(gameObject));
@@ -156,6 +232,38 @@ namespace ChroMapper_UIPluginDesigner
                     RegisterLayoutObject(builder, "LabelForceExp");
                     RegisterLayoutObject(builder, "LblFExpW");
                     RegisterLayoutObject(builder, "LblFExpH");
+
+                    // ScrollRect Inspector Inputs
+                    _inputScrollSens = BindInspectorInput(builder, UIConstants.NameScrollSensitivity, true, false, false);
+                    if (_inputScrollSens != null) _scrollInspectorObjects.Add(_inputScrollSens.gameObject);
+
+                    _inputScrollVis = builder.Get<UIDropdown>(UIConstants.NameScrollVisibility);
+                    if (_inputScrollVis != null)
+                    {
+                        var options = new List<string>(Enum.GetNames(typeof(ScrollRect.ScrollbarVisibility)));
+                        _inputScrollVis.SetOptions(options);
+                        _inputScrollVis.Dropdown.onValueChanged.AddListener((v) => UpdateSelectedElement());
+                        _scrollInspectorObjects.Add(_inputScrollVis.gameObject);
+                    }
+                    
+                    RegisterScrollObject(builder, "LabelScrollSens");
+                    RegisterScrollObject(builder, "LabelScrollVis");
+
+                    // Slider Inspector
+                    _inputMinV = BindInspectorInput(builder, UIConstants.NameMinValue, true);
+                    if (_inputMinV != null) _sliderInspectorObjects.Add(_inputMinV.gameObject);
+                    _inputMaxV = BindInspectorInput(builder, UIConstants.NameMaxValue, true);
+                    if (_inputMaxV != null) _sliderInspectorObjects.Add(_inputMaxV.gameObject);
+                    _tglIsInt = BindInspectorToggle(builder, UIConstants.NameIsInteger);
+                    if (_tglIsInt != null) _sliderInspectorObjects.Add(_tglIsInt.gameObject);
+                    RegisterSliderObject(builder, "LabelMinV");
+                    RegisterSliderObject(builder, "LabelMaxV");
+                    RegisterSliderObject(builder, "LabelIsInt");
+
+                    // Image Inspector
+                    _inputHexColor = BindInspectorInput(builder, UIConstants.NameHexColor, false);
+                    if (_inputHexColor != null) _imageInspectorObjects.Add(_inputHexColor.gameObject);
+                    RegisterImageObject(builder, "LabelHexColor");
                 }
         
                 private UITextInput BindMenuInput(UILayoutBuilder builder, string name, UnityEngine.Events.UnityAction action)
@@ -215,6 +323,24 @@ namespace ChroMapper_UIPluginDesigner
                 {
                     var obj = builder.GetObject(name);
                     if (obj != null) _layoutInspectorObjects.Add(obj);
+                }
+
+                private void RegisterScrollObject(UILayoutBuilder builder, string name)
+                {
+                    var obj = builder.GetObject(name);
+                    if (obj != null) _scrollInspectorObjects.Add(obj);
+                }
+
+                private void RegisterSliderObject(UILayoutBuilder builder, string name)
+                {
+                    var obj = builder.GetObject(name);
+                    if (obj != null) _sliderInspectorObjects.Add(obj);
+                }
+
+                private void RegisterImageObject(UILayoutBuilder builder, string name)
+                {
+                    var obj = builder.GetObject(name);
+                    if (obj != null) _imageInspectorObjects.Add(obj);
                 }
         
         private void UpdateMenuSize()
@@ -456,11 +582,19 @@ namespace ChroMapper_UIPluginDesigner
 
             if (type == ElementType.Label) { data.SizeX = 200; data.SizeY = 30; }
             if (type == ElementType.Button) { data.SizeX = 100; data.SizeY = 30; }
-            if (type == ElementType.VerticalLayout || type == ElementType.HorizontalLayout)
+            if (type == ElementType.Slider) { data.SizeX = 160; data.SizeY = 20; data.Text = ""; }
+            if (type == ElementType.Image) { data.SizeX = 100; data.SizeY = 100; data.Text = ""; data.HexColor = "#FFFFFF"; }
+            if (type == ElementType.RadioButton) { data.SizeX = 100; data.SizeY = 25; data.Text = "Radio"; }
+            if (type == ElementType.VerticalLayout || type == ElementType.HorizontalLayout || type == ElementType.ScrollRect)
             {
                 data.SizeX = 200;
                 data.SizeY = 200;
                 data.Text = "";
+            }
+            if (type == ElementType.ScrollRect)
+            {
+                data.ChildControlWidth = true; 
+                data.ChildForceExpandWidth = true;
             }
 
             _elements.Add(data);
@@ -481,7 +615,7 @@ namespace ChroMapper_UIPluginDesigner
 
             // Check if parent is a Layout Group
             var parent = FindParent(_elements, data);
-            bool isChildOfLayout = parent != null && (parent.Type == ElementType.VerticalLayout || parent.Type == ElementType.HorizontalLayout);
+            bool isChildOfLayout = parent != null && (parent.Type == ElementType.VerticalLayout || parent.Type == ElementType.HorizontalLayout || parent.Type == ElementType.ScrollRect);
             
             if (_inputX != null && _inputX.InputField != null) _inputX.InputField.interactable = !isChildOfLayout;
             if (_inputY != null && _inputY.InputField != null) _inputY.InputField.interactable = !isChildOfLayout;
@@ -491,13 +625,16 @@ namespace ChroMapper_UIPluginDesigner
             if (_inputH != null && _inputH.InputField != null) 
                 _inputH.InputField.interactable = !(isChildOfLayout && parent.ChildControlHeight);
 
-            bool isLayout = (data.Type == ElementType.VerticalLayout || data.Type == ElementType.HorizontalLayout);
+            bool isLayout = (data.Type == ElementType.VerticalLayout || data.Type == ElementType.HorizontalLayout || data.Type == ElementType.ScrollRect);
+            bool isScroll = (data.Type == ElementType.ScrollRect);
+            bool isSlider = (data.Type == ElementType.Slider);
+            bool isImage = (data.Type == ElementType.Image);
             
-            ToggleLayoutInspector(isLayout);
+            ToggleLayoutInspector(isLayout, isScroll, isSlider, isImage);
 
             if (isLayout)
             {
-                // Layout Props
+                // ... (Layout Group props) ...
                 if (_inputPadL != null) _inputPadL.InputField.SetTextWithoutNotify(data.PaddingLeft.ToString());
                 if (_inputPadR != null) _inputPadR.InputField.SetTextWithoutNotify(data.PaddingRight.ToString());
                 if (_inputPadT != null) _inputPadT.InputField.SetTextWithoutNotify(data.PaddingTop.ToString());
@@ -510,8 +647,27 @@ namespace ChroMapper_UIPluginDesigner
                 if (_tglChCH != null) _tglChCH.SetIsOnWithoutNotify(data.ChildControlHeight);
                 if (_tglChFW != null) _tglChFW.SetIsOnWithoutNotify(data.ChildForceExpandWidth);
                 if (_tglChFH != null) _tglChFH.SetIsOnWithoutNotify(data.ChildForceExpandHeight);
+
+                if (isScroll)
+                {
+                    if (_inputScrollSens != null) _inputScrollSens.InputField.SetTextWithoutNotify(data.ScrollSensitivity.ToString());
+                    if (_inputScrollVis != null) _inputScrollVis.Dropdown.SetValueWithoutNotify((int)data.ScrollVisibility);
+                }
             }
-            else
+            
+            if (isSlider)
+            {
+                if (_inputMinV != null) _inputMinV.InputField.SetTextWithoutNotify(data.MinValue.ToString());
+                if (_inputMaxV != null) _inputMaxV.InputField.SetTextWithoutNotify(data.MaxValue.ToString());
+                if (_tglIsInt != null) _tglIsInt.SetIsOnWithoutNotify(data.IsInteger);
+            }
+
+            if (isImage)
+            {
+                if (_inputHexColor != null) _inputHexColor.InputField.SetTextWithoutNotify(data.HexColor);
+            }
+
+            if (!isLayout && !isSlider && !isImage)
             {
                 // Normal Props
                 if (_inputText != null && _inputText.InputField != null) _inputText.InputField.SetTextWithoutNotify(data.Text);
@@ -533,15 +689,27 @@ namespace ChroMapper_UIPluginDesigner
             }
         }
 
-        private void ToggleLayoutInspector(bool showLayout)
+        private void ToggleLayoutInspector(bool showLayout, bool showScroll, bool showSlider, bool showImage)
         {
             foreach (var obj in _layoutInspectorObjects)
             {
                 obj.SetActive(showLayout);
             }
+            foreach (var obj in _scrollInspectorObjects)
+            {
+                obj.SetActive(showScroll);
+            }
+            foreach (var obj in _sliderInspectorObjects)
+            {
+                obj.SetActive(showSlider);
+            }
+            foreach (var obj in _imageInspectorObjects)
+            {
+                obj.SetActive(showImage);
+            }
             foreach (var obj in _normalInspectorObjects)
             {
-                obj.SetActive(!showLayout);
+                obj.SetActive(!showLayout && !showSlider && !showImage);
             }
         }
 
@@ -557,7 +725,10 @@ namespace ChroMapper_UIPluginDesigner
             if (_inputW != null && float.TryParse(_inputW.InputField.text, out float w)) _selectedElement.SizeX = w;
             if (_inputH != null && float.TryParse(_inputH.InputField.text, out float h)) _selectedElement.SizeY = h;
 
-            bool isLayout = (_selectedElement.Type == ElementType.VerticalLayout || _selectedElement.Type == ElementType.HorizontalLayout);
+            bool isLayout = (_selectedElement.Type == ElementType.VerticalLayout || _selectedElement.Type == ElementType.HorizontalLayout || _selectedElement.Type == ElementType.ScrollRect);
+            bool isScroll = (_selectedElement.Type == ElementType.ScrollRect);
+            bool isSlider = (_selectedElement.Type == ElementType.Slider);
+            bool isImage = (_selectedElement.Type == ElementType.Image);
 
             if (isLayout)
             {
@@ -573,8 +744,27 @@ namespace ChroMapper_UIPluginDesigner
                 if (_tglChCH != null) _selectedElement.ChildControlHeight = _tglChCH.isOn;
                 if (_tglChFW != null) _selectedElement.ChildForceExpandWidth = _tglChFW.isOn;
                 if (_tglChFH != null) _selectedElement.ChildForceExpandHeight = _tglChFH.isOn;
+
+                if (isScroll)
+                {
+                    if (_inputScrollSens != null && float.TryParse(_inputScrollSens.InputField.text, out float sens)) _selectedElement.ScrollSensitivity = sens;
+                    if (_inputScrollVis != null) _selectedElement.ScrollVisibility = (ScrollRect.ScrollbarVisibility)_inputScrollVis.Dropdown.value;
+                }
             }
-            else
+            
+            if (isSlider)
+            {
+                if (_inputMinV != null && float.TryParse(_inputMinV.InputField.text, out float min)) _selectedElement.MinValue = min;
+                if (_inputMaxV != null && float.TryParse(_inputMaxV.InputField.text, out float max)) _selectedElement.MaxValue = max;
+                if (_tglIsInt != null) _selectedElement.IsInteger = _tglIsInt.isOn;
+            }
+
+            if (isImage)
+            {
+                if (_inputHexColor != null) _selectedElement.HexColor = _inputHexColor.InputField.text;
+            }
+
+            if (!isLayout && !isSlider && !isImage)
             {
                 if (_inputText != null && _inputText.InputField != null) _selectedElement.Text = _inputText.InputField.text;
                 if (_inputFontSize != null && float.TryParse(_inputFontSize.InputField.text, out float f)) _selectedElement.FontSize = f;

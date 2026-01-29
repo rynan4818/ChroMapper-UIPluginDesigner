@@ -1,0 +1,1 @@
+    ui.AddButton({{Parent}}, "{{Name}}", "{{Text}}", {{FontSize}}, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}}, () => {});

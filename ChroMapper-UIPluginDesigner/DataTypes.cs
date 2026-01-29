@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ChroMapper_UIPluginDesigner
 {
-    public enum ElementType { Button, Label, TextInput, Dropdown, Checkbox, VerticalLayout, HorizontalLayout }
+    public enum ElementType { Button, Label, TextInput, Dropdown, Checkbox, VerticalLayout, HorizontalLayout, ScrollRect, Slider, Image, RadioButton }
 
     [Serializable]
     public class ElementData
@@ -23,6 +24,18 @@ namespace ChroMapper_UIPluginDesigner
         public TextAnchor Alignment;
         public bool ChildControlWidth, ChildControlHeight;
         public bool ChildForceExpandWidth, ChildForceExpandHeight;
+
+        // ScrollRect Properties
+        public float ScrollSensitivity = 20f;
+        public ScrollRect.ScrollbarVisibility ScrollVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+
+        // Slider Properties
+        public float MinValue = 0f;
+        public float MaxValue = 1f;
+        public bool IsInteger = false;
+
+        // Image Properties
+        public string HexColor = "#FFFFFF";
 
         public List<ElementData> Children = new List<ElementData>();
 
@@ -42,7 +55,7 @@ namespace ChroMapper_UIPluginDesigner
             el.SizeY = n[UIConstants.KeySizeY].AsFloat;
             el.FontSize = n[UIConstants.KeyFontSize].AsFloat;
 
-            if (el.Type == ElementType.VerticalLayout || el.Type == ElementType.HorizontalLayout)
+            if (el.Type == ElementType.VerticalLayout || el.Type == ElementType.HorizontalLayout || el.Type == ElementType.ScrollRect)
             {
                 el.PaddingTop = n[UIConstants.KeyPaddingTop].AsInt;
                 el.PaddingBottom = n[UIConstants.KeyPaddingBottom].AsInt;
@@ -59,6 +72,27 @@ namespace ChroMapper_UIPluginDesigner
                 el.ChildControlHeight = n[UIConstants.KeyChildControlHeight].AsBool;
                 el.ChildForceExpandWidth = n[UIConstants.KeyChildForceExpandWidth].AsBool;
                 el.ChildForceExpandHeight = n[UIConstants.KeyChildForceExpandHeight].AsBool;
+
+                if (el.Type == ElementType.ScrollRect)
+                {
+                    if (n[UIConstants.KeyScrollSensitivity] != null)
+                        el.ScrollSensitivity = n[UIConstants.KeyScrollSensitivity].AsFloat;
+                    
+                    if (Enum.TryParse(n[UIConstants.KeyScrollVisibility].Value, out ScrollRect.ScrollbarVisibility vis))
+                        el.ScrollVisibility = vis;
+                }
+
+                if (el.Type == ElementType.Slider)
+                {
+                    el.MinValue = n[UIConstants.KeyMinValue].AsFloat;
+                    el.MaxValue = n[UIConstants.KeyMaxValue].AsFloat;
+                    el.IsInteger = n[UIConstants.KeyIsInteger].AsBool;
+                }
+
+                if (el.Type == ElementType.Image)
+                {
+                    el.HexColor = n[UIConstants.KeyHexColor].Value;
+                }
 
                 if (n[UIConstants.KeyChildren] != null)
                 {
@@ -84,7 +118,7 @@ namespace ChroMapper_UIPluginDesigner
             n[UIConstants.KeySizeY] = SizeY;
             n[UIConstants.KeyFontSize] = FontSize;
 
-            if (Type == ElementType.VerticalLayout || Type == ElementType.HorizontalLayout)
+            if (Type == ElementType.VerticalLayout || Type == ElementType.HorizontalLayout || Type == ElementType.ScrollRect)
             {
                 n[UIConstants.KeyPaddingTop] = PaddingTop;
                 n[UIConstants.KeyPaddingBottom] = PaddingBottom;
@@ -96,6 +130,24 @@ namespace ChroMapper_UIPluginDesigner
                 n[UIConstants.KeyChildControlHeight] = ChildControlHeight;
                 n[UIConstants.KeyChildForceExpandWidth] = ChildForceExpandWidth;
                 n[UIConstants.KeyChildForceExpandHeight] = ChildForceExpandHeight;
+
+                if (Type == ElementType.ScrollRect)
+                {
+                    n[UIConstants.KeyScrollSensitivity] = ScrollSensitivity;
+                    n[UIConstants.KeyScrollVisibility] = ScrollVisibility.ToString();
+                }
+
+                if (Type == ElementType.Slider)
+                {
+                    n[UIConstants.KeyMinValue] = MinValue;
+                    n[UIConstants.KeyMaxValue] = MaxValue;
+                    n[UIConstants.KeyIsInteger] = IsInteger;
+                }
+
+                if (Type == ElementType.Image)
+                {
+                    n[UIConstants.KeyHexColor] = HexColor;
+                }
 
                 var childrenArr = new JSONArray();
                 foreach (var child in Children)

@@ -6,6 +6,10 @@
 
 *   **UI配置**: ボタン、ラベル、テキスト入力、ドロップダウン、チェックボックスをドラッグ＆ドロップで配置・移動できます。
 *   **Layout Group**: **Vertical Layout Group** (縦並び) や **Horizontal Layout Group** (横並び) を作成し、要素を自動的に整列させることができます。グループの中にグループを入れる（入れ子）ことも可能です。
+*   **Scroll Rect**: **Scroll Rect** (スクロールビュー) を作成し、スクロール可能なエリアを作ることができます。
+*   **Slider**: 数値を調整するためのスライダーバーを配置できます。整数モードや最小・最大値の設定が可能です。
+*   **Image**: 指定した色（Hexカラー）で塗りつぶされた矩形を配置できます。装飾や背景として利用可能です。
+*   **Radio Button**: グループ化された選択肢（ラジオボタン）を作成できます。同じ親要素内にあるラジオボタンは自動的に連動します。
 *   **階層構造の編集**:
     *   **ドラッグ＆ドロップ**: 要素をLayout Groupの上にドラッグ＆ドロップすることで、そのグループの子要素として配置できます。
     *   **階層一覧**: インスペクタのドロップダウンリストから、UIの全階層を確認し、直接要素を選択することができます。
@@ -72,7 +76,8 @@
 ### 必要な準備
 出力されたコードを動作させるには、ChroMapper-UIPluginDesignerのソースコードに含まれる `HelperUI.cs` があなたのプロジェクトに必要です。
 
-1.  `ChroMapper-UIPluginDesigner` のソースから **`HelperUI.cs`** をあなたのプロジェクトにコピーします。
+1.  `ChroMapper-UIPluginDesigner` のソースから **最新の `HelperUI.cs`** をあなたのプロジェクトにコピーします。
+    *   **注意**: SliderやImage、ScrollRect機能などの追加に伴い、`HelperUI.cs` に新しいメソッド（`AddSlider`, `AttachSimpleImage` など）が追加されています。古いバージョンをお使いの場合は更新してください。
 2.  以下のテンプレートを使ってプラグインのUIクラスを作成します。
 
 ### 実装テンプレート (C#)
@@ -242,7 +247,49 @@ namespace MyPlugin
 
 ---
 
-## 3. 保存されるJSONフォーマット仕様
+## 4. コード生成テンプレートのカスタマイズ
+
+**Export Code** 機能で出力されるC#コードの形式は、外部テンプレートファイルを使ってカスタマイズすることができます。
+これにより、生成されるコードをあなたのプロジェクトのコーディング規約に合わせたり、独自の初期化処理を追加したりすることが可能です。
+
+### カスタマイズ方法
+
+1.  変更したいテンプレート（例: `Button.txt`）を用意します。
+2.  そのファイルを、プラグインのDLL（`ChroMapper-UIPluginDesigner.dll`）と同じフォルダ、またはその中の `Templates` サブフォルダに配置します。
+
+### テンプレートの読み込み優先順位
+
+1.  `Plugins/テンプレート名.txt` （DLLと同じ場所）
+2.  `Plugins/Templates/テンプレート名.txt` （Templatesサブフォルダ）
+3.  埋め込みリソース（デフォルト）
+
+### 利用可能なテンプレート一覧
+
+*   `Button.txt`
+*   `Label.txt`
+*   `TextInput.txt`
+*   `Dropdown.txt`
+*   `Checkbox.txt`
+*   `RadioButton.txt`
+*   `Slider.txt`
+*   `Image.txt`
+*   `LayoutGroup.txt` (Vertical/Horizontal共通)
+*   `ScrollRect.txt`
+
+### テンプレートの記述例 (Button.txt)
+
+テンプレート内では `{{変数名}}` の形式でプレースホルダーを使用できます。
+
+```csharp
+// カスタムボタン生成コード
+var btn = ui.AddButton({{Parent}}, "{{Name}}", "{{Text}}", {{FontSize}}, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}}, () => {});
+// ここに独自の設定を追加できます
+btn.gameObject.AddComponent<MyCustomComponent>();
+```
+
+---
+
+## 5. 保存されるJSONフォーマット仕様
 
 保存されるJSONファイルは以下の構造を持っています。この仕様を理解することで、外部ツールでの編集や動的な生成が可能になります。
 
@@ -268,7 +315,7 @@ JSONのルートには、メインとなるメニューパネルの設定と、�
 
 | キー (Key) | 型 (Type) | 説明 (Description) |
 | :--- | :--- | :--- |
-| `Type` | String | 要素の種類。<br>有効な値: `Button`, `Label`, `TextInput`, `Dropdown`, `Checkbox`, `VerticalLayout`, `HorizontalLayout` |
+| `Type` | String | 要素の種類。<br>有効な値: `Button`, `Label`, `TextInput`, `Dropdown`, `Checkbox`, `VerticalLayout`, `HorizontalLayout`, `ScrollRect`, `Slider`, `Image`, `RadioButton` |
 | `Name` | String | 要素の名前 (UnityのGameObject名になります) |
 | `Text` | String | 表示テキスト (ボタンのラベルやテキスト入力の初期値など) |
 | `AnchorPosX` | Number | アンカーからのX相対位置 |
@@ -294,3 +341,30 @@ JSONのルートには、メインとなるメニューパネルの設定と、�
 | `ChildForceExpandWidth` | Boolean | 子要素を幅いっぱいに強制的に広げるか |
 | `ChildForceExpandHeight` | Boolean | 子要素を高さいっぱいに強制的に広げるか |
 | `Children` | Array | Layout Group に含まれる子要素のリスト (入れ子構造が可能) |
+
+**Scroll Rect 専用プロパティ:**
+
+`Type` が `ScrollRect` の場合、以下のプロパティが有効になります。`ScrollRect` は内部的に `VerticalLayout` の機能も持つため、上記のLayout Groupプロパティも同時に使用されます。
+
+| キー (Key) | 型 (Type) | 説明 (Description) |
+| :--- | :--- | :--- |
+| `ScrollSensitivity` | Number | スクロールの感度 (デフォルト: 20) |
+| `ScrollVisibility` | String | スクロールバーの表示設定<br>`Permanent`: 常時表示<br>`AutoHide`: 自動的に隠す<br>`AutoHideAndExpandViewport`: 自動的に隠し、幅を広げる |
+
+**Slider 専用プロパティ:**
+
+`Type` が `Slider` の場合、以下のプロパティが有効になります。
+
+| キー (Key) | 型 (Type) | 説明 (Description) |
+| :--- | :--- | :--- |
+| `MinValue` | Number | スライダーの最小値 |
+| `MaxValue` | Number | スライダーの最大値 |
+| `IsInteger` | Boolean | 値を整数に限定するかどうか |
+
+**Image 専用プロパティ:**
+
+`Type` が `Image` の場合、以下のプロパティが有効になります。
+
+| キー (Key) | 型 (Type) | 説明 (Description) |
+| :--- | :--- | :--- |
+| `HexColor` | String | 色指定 (形式: `#RRGGBB` または `#RRGGBBAA`) |

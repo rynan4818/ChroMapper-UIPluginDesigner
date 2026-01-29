@@ -75,48 +75,160 @@ namespace ChroMapper_UIPluginDesigner
             string w = el.SizeX.ToString("F0");
             string h = el.SizeY.ToString("F0");
             string f = el.FontSize.ToString("F0");
+            string safeName = el.Name.Replace(" ", "_").Replace("-", "_");
+
+            string code = "";
 
             switch (el.Type)
             {
                 case ElementType.Button:
-                    sb.AppendLine($"    ui.AddButton({parentVar}, \"{el.Name}\", \"{el.Text}\", {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, () => {{}}); // Note: Click handler is a placeholder");
+                    code = TemplateManager.GetTemplate("Button")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Text}}", el.Text)
+                        .Replace("{{FontSize}}", f)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y);
                     break;
                 case ElementType.Label:
-                    sb.AppendLine($"    ui.AddLabel({parentVar}, \"{el.Name}\", \"{el.Text}\", {w}, {h}, 0.5f, 0.5f, {x}, {y}, TextAlignmentOptions.Center, {f});");
+                    code = TemplateManager.GetTemplate("Label")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Text}}", el.Text)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y)
+                        .Replace("{{FontSize}}", f);
                     break;
                 case ElementType.TextInput:
-                    sb.AppendLine($"    ui.AddTextInput({parentVar}, \"{el.Name}\", \"{el.Text}\", TextAlignmentOptions.Left, {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                    code = TemplateManager.GetTemplate("TextInput")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Text}}", el.Text)
+                        .Replace("{{FontSize}}", f)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y);
                     break;
                 case ElementType.Dropdown:
-                    sb.AppendLine($"    ui.AddDropdown({parentVar}, new List<string>(), 0, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                    code = TemplateManager.GetTemplate("Dropdown")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y);
                     break;
                 case ElementType.Checkbox:
-                    sb.AppendLine($"    ui.AddCheckbox({parentVar}, true, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnValueChanged handler is a placeholder");
+                    code = TemplateManager.GetTemplate("Checkbox")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y);
+                    break;
+                case ElementType.RadioButton:
+                    code = TemplateManager.GetTemplate("RadioButton")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{SafeName}}", safeName)
+                        .Replace("{{Text}}", el.Text)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y)
+                        .Replace("{{LabelWidth}}", (el.SizeX - 20).ToString());
+                    break;
+                case ElementType.Slider:
+                    code = TemplateManager.GetTemplate("Slider")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{Min}}", el.MinValue.ToString())
+                        .Replace("{{Max}}", el.MaxValue.ToString())
+                        .Replace("{{IsInt}}", el.IsInteger ? "true" : "false")
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y);
+                    break;
+                case ElementType.Image:
+                    code = TemplateManager.GetTemplate("Image")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{SafeName}}", safeName)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y)
+                        .Replace("{{HexColor}}", el.HexColor);
                     break;
                 case ElementType.VerticalLayout:
                 case ElementType.HorizontalLayout:
-                    string varName = "go_" + el.Name.Replace(" ", "_").Replace("-", "_");
-                    sb.AppendLine($"    // Layout Group: {el.Name}");
-                    sb.AppendLine($"    var {varName} = new GameObject(\"{el.Name}\");");
-                    sb.AppendLine($"    {varName}.transform.SetParent({parentVar}, false);");
-                    sb.AppendLine($"    var rt_{varName} = {varName}.AddComponent<RectTransform>();");
-                    sb.AppendLine($"    ui.MoveTransform(rt_{varName}, {w}, {h}, 0.5f, 0.5f, {x}, {y});");
-                    
                     string groupType = (el.Type == ElementType.VerticalLayout) ? "VerticalLayoutGroup" : "HorizontalLayoutGroup";
-                    sb.AppendLine($"    var lg_{varName} = {varName}.AddComponent<{groupType}>();");
-                    sb.AppendLine($"    lg_{varName}.padding = new RectOffset({el.PaddingLeft}, {el.PaddingRight}, {el.PaddingTop}, {el.PaddingBottom});");
-                    sb.AppendLine($"    lg_{varName}.spacing = {el.Spacing}f;");
-                    sb.AppendLine($"    lg_{varName}.childAlignment = TextAnchor.{el.Alignment};");
-                    sb.AppendLine($"    lg_{varName}.childControlWidth = {(el.ChildControlWidth ? "true" : "false")};");
-                    sb.AppendLine($"    lg_{varName}.childControlHeight = {(el.ChildControlHeight ? "true" : "false")};");
-                    sb.AppendLine($"    lg_{varName}.childForceExpandWidth = {(el.ChildForceExpandWidth ? "true" : "false")};");
-                    sb.AppendLine($"    lg_{varName}.childForceExpandHeight = {(el.ChildForceExpandHeight ? "true" : "false")};");
-
+                    code = TemplateManager.GetTemplate("LayoutGroup")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{SafeName}}", safeName)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y)
+                        .Replace("{{GroupType}}", groupType)
+                        .Replace("{{PaddingLeft}}", el.PaddingLeft.ToString())
+                        .Replace("{{PaddingRight}}", el.PaddingRight.ToString())
+                        .Replace("{{PaddingTop}}", el.PaddingTop.ToString())
+                        .Replace("{{PaddingBottom}}", el.PaddingBottom.ToString())
+                        .Replace("{{Spacing}}", el.Spacing.ToString())
+                        .Replace("{{Alignment}}", el.Alignment.ToString())
+                        .Replace("{{ChildControlWidth}}", el.ChildControlWidth ? "true" : "false")
+                        .Replace("{{ChildControlHeight}}", el.ChildControlHeight ? "true" : "false")
+                        .Replace("{{ChildForceExpandWidth}}", el.ChildForceExpandWidth ? "true" : "false")
+                        .Replace("{{ChildForceExpandHeight}}", el.ChildForceExpandHeight ? "true" : "false");
+                    
+                    sb.AppendLine(code);
                     foreach (var child in el.Children)
                     {
-                        ExportElement(sb, child, $"{varName}.transform");
+                        ExportElement(sb, child, $"go_{safeName}.transform");
                     }
-                    break;
+                    return; // Early return because layout group handles children recursion
+                case ElementType.ScrollRect:
+                    code = TemplateManager.GetTemplate("ScrollRect")
+                        .Replace("{{Parent}}", parentVar)
+                        .Replace("{{Name}}", el.Name)
+                        .Replace("{{SafeName}}", safeName)
+                        .Replace("{{Width}}", w)
+                        .Replace("{{Height}}", h)
+                        .Replace("{{PosX}}", x)
+                        .Replace("{{PosY}}", y)
+                        .Replace("{{ScrollSensitivity}}", el.ScrollSensitivity.ToString())
+                        .Replace("{{PaddingLeft}}", el.PaddingLeft.ToString())
+                        .Replace("{{PaddingRight}}", el.PaddingRight.ToString())
+                        .Replace("{{PaddingTop}}", el.PaddingTop.ToString())
+                        .Replace("{{PaddingBottom}}", el.PaddingBottom.ToString())
+                        .Replace("{{Spacing}}", el.Spacing.ToString())
+                        .Replace("{{Alignment}}", el.Alignment.ToString())
+                        .Replace("{{ChildControlWidth}}", el.ChildControlWidth ? "true" : "false")
+                        .Replace("{{ChildControlHeight}}", el.ChildControlHeight ? "true" : "false")
+                        .Replace("{{ChildForceExpandWidth}}", el.ChildForceExpandWidth ? "true" : "false")
+                        .Replace("{{ChildForceExpandHeight}}", el.ChildForceExpandHeight ? "true" : "false")
+                        .Replace("{{ScrollVisibility}}", el.ScrollVisibility.ToString());
+
+                    sb.AppendLine(code);
+                    foreach (var child in el.Children)
+                    {
+                        ExportElement(sb, child, $"ct_{safeName}.transform");
+                    }
+                    return;
+            }
+
+            if (!string.IsNullOrEmpty(code))
+            {
+                sb.AppendLine(code);
             }
         }
     }

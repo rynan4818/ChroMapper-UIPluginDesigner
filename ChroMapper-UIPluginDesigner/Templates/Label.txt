@@ -1,0 +1,1 @@
+    ui.AddLabel({{Parent}}, "{{Name}}", "{{Text}}", {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}}, TextAlignmentOptions.Center, {{FontSize}});

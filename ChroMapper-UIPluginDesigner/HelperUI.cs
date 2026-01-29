@@ -112,12 +112,74 @@ namespace ChroMapper_UIPluginDesigner
             return toggleComponent;
         }
 
+        public Slider AddSlider(Transform parent, string name, float value, float min, float max, bool isInt, float sizeX, float sizeY, float anchorX, float anchorY, float anchorPosX, float anchorPosY, UnityAction<float> onChange, float pivotX = 0.5f, float pivotY = 0.5f)
+        {
+            var sliderGo = new GameObject(name, typeof(RectTransform));
+            sliderGo.transform.SetParent(parent, false);
+            var slider = sliderGo.AddComponent<Slider>();
+
+            // Background
+            var bgGo = new GameObject("Background", typeof(RectTransform));
+            bgGo.transform.SetParent(sliderGo.transform, false);
+            var bgImg = bgGo.AddComponent<Image>();
+            bgImg.color = new Color(0.2f, 0.2f, 0.2f);
+            var bgRt = bgGo.GetComponent<RectTransform>();
+            bgRt.anchorMin = new Vector2(0, 0.25f);
+            bgRt.anchorMax = new Vector2(1, 0.75f);
+            bgRt.sizeDelta = Vector2.zero;
+
+            // Fill Area
+            var fillArea = new GameObject("Fill Area", typeof(RectTransform));
+            fillArea.transform.SetParent(sliderGo.transform, false);
+            var faRt = fillArea.GetComponent<RectTransform>();
+            faRt.anchorMin = new Vector2(0, 0.25f);
+            faRt.anchorMax = new Vector2(1, 0.75f);
+            faRt.sizeDelta = Vector2.zero;
+
+            var fillGo = new GameObject("Fill", typeof(RectTransform));
+            fillGo.transform.SetParent(fillArea.transform, false);
+            var fillImg = fillGo.AddComponent<Image>();
+            fillImg.color = new Color(0.8f, 0.8f, 0.8f);
+            slider.fillRect = fillGo.GetComponent<RectTransform>();
+            slider.fillRect.sizeDelta = Vector2.zero;
+
+            // Handle Slide Area
+            var handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
+            handleArea.transform.SetParent(sliderGo.transform, false);
+            var haRt = handleArea.GetComponent<RectTransform>();
+            haRt.anchorMin = Vector2.zero;
+            haRt.anchorMax = Vector2.one;
+            haRt.sizeDelta = Vector2.zero;
+
+            var handleGo = new GameObject("Handle", typeof(RectTransform));
+            handleGo.transform.SetParent(handleArea.transform, false);
+            var handleImg = handleGo.AddComponent<Image>();
+            handleImg.color = Color.white;
+            slider.handleRect = handleGo.GetComponent<RectTransform>();
+            slider.handleRect.sizeDelta = new Vector2(sizeY, 0); // Handle is same as height
+
+            slider.minValue = min;
+            slider.maxValue = max;
+            slider.wholeNumbers = isInt;
+            slider.value = value;
+            if (onChange != null) slider.onValueChanged.AddListener(onChange);
+
+            MoveTransform(sliderGo.transform, sizeX, sizeY, anchorX, anchorY, anchorPosX, anchorPosY, pivotX, pivotY);
+            return slider;
+        }
+
         public void AttachImage(GameObject obj, Color color)
         {
             var imageSetting = obj.AddComponent<Image>();
             imageSetting.sprite = PersistentUI.Instance.Sprites.Background;
             imageSetting.type = Image.Type.Sliced;
             imageSetting.color = color;
+        }
+
+        public void AttachSimpleImage(GameObject obj, Color color)
+        {
+            var img = obj.AddComponent<Image>();
+            img.color = color;
         }
 
         public void MoveTransform(Transform transform, float sizeX, float sizeY, float anchorX, float anchorY, float anchorPosX, float anchorPosY, float pivotX = 0.5f, float pivotY = 0.5f)

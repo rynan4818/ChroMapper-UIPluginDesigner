@@ -1,0 +1,77 @@
+    // ScrollRect: {{Name}}
+    var go_{{SafeName}} = new GameObject("{{Name}}");
+    go_{{SafeName}}.transform.SetParent({{Parent}}, false);
+    var rt_{{SafeName}} = go_{{SafeName}}.AddComponent<RectTransform>();
+    ui.MoveTransform(rt_{{SafeName}}, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}});
+    
+    var scroll_{{SafeName}} = go_{{SafeName}}.AddComponent<ScrollRect>();
+    scroll_{{SafeName}}.horizontal = false;
+    scroll_{{SafeName}}.vertical = true;
+    scroll_{{SafeName}}.scrollSensitivity = {{ScrollSensitivity}}f;
+    go_{{SafeName}}.AddComponent<Image>().color = new Color(0,0,0,0);
+
+    // Viewport
+    var vp_{{SafeName}} = new GameObject("Viewport");
+    vp_{{SafeName}}.transform.SetParent(go_{{SafeName}}.transform, false);
+    var rt_vp_{{SafeName}} = vp_{{SafeName}}.AddComponent<RectTransform>();
+    rt_vp_{{SafeName}}.anchorMin = Vector2.zero;
+    rt_vp_{{SafeName}}.anchorMax = Vector2.one;
+    rt_vp_{{SafeName}}.sizeDelta = Vector2.zero;
+    vp_{{SafeName}}.AddComponent<Image>().color = new Color(0,0,0,0);
+    vp_{{SafeName}}.AddComponent<Mask>().showMaskGraphic = false;
+    scroll_{{SafeName}}.viewport = rt_vp_{{SafeName}};
+
+    // Content
+    var ct_{{SafeName}} = new GameObject("Content");
+    ct_{{SafeName}}.transform.SetParent(vp_{{SafeName}}.transform, false);
+    var rt_ct_{{SafeName}} = ct_{{SafeName}}.AddComponent<RectTransform>();
+    rt_ct_{{SafeName}}.anchorMin = new Vector2(0, 1);
+    rt_ct_{{SafeName}}.anchorMax = new Vector2(1, 1);
+    rt_ct_{{SafeName}}.pivot = new Vector2(0.5f, 1);
+    rt_ct_{{SafeName}}.sizeDelta = Vector2.zero;
+    
+    var lg_{{SafeName}} = ct_{{SafeName}}.AddComponent<VerticalLayoutGroup>();
+    lg_{{SafeName}}.padding = new RectOffset({{PaddingLeft}}, {{PaddingRight}}, {{PaddingTop}}, {{PaddingBottom}});
+    lg_{{SafeName}}.spacing = {{Spacing}}f;
+    lg_{{SafeName}}.childAlignment = TextAnchor.{{Alignment}};
+    lg_{{SafeName}}.childControlWidth = {{ChildControlWidth}};
+    lg_{{SafeName}}.childControlHeight = {{ChildControlHeight}};
+    lg_{{SafeName}}.childForceExpandWidth = {{ChildForceExpandWidth}};
+    lg_{{SafeName}}.childForceExpandHeight = {{ChildForceExpandHeight}};
+
+    var csf_{{SafeName}} = ct_{{SafeName}}.AddComponent<ContentSizeFitter>();
+    csf_{{SafeName}}.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+    scroll_{{SafeName}}.content = rt_ct_{{SafeName}};
+
+    // Scrollbar
+    var sb_{{SafeName}} = new GameObject("Scrollbar Vertical");
+    sb_{{SafeName}}.transform.SetParent(go_{{SafeName}}.transform, false);
+    var rt_sb_{{SafeName}} = sb_{{SafeName}}.AddComponent<RectTransform>();
+    rt_sb_{{SafeName}}.anchorMin = new Vector2(1, 0);
+    rt_sb_{{SafeName}}.anchorMax = new Vector2(1, 1);
+    rt_sb_{{SafeName}}.pivot = new Vector2(1, 1);
+    rt_sb_{{SafeName}}.sizeDelta = new Vector2(20, 0);
+    sb_{{SafeName}}.AddComponent<Image>().color = new Color(0, 0, 0, 0.1f);
+    var scrollbar_{{SafeName}} = sb_{{SafeName}}.AddComponent<Scrollbar>();
+    scrollbar_{{SafeName}}.direction = Scrollbar.Direction.BottomToTop;
+    
+    var sl_{{SafeName}} = new GameObject("Sliding Area");
+    sl_{{SafeName}}.transform.SetParent(sb_{{SafeName}}.transform, false);
+    var rt_sl_{{SafeName}} = sl_{{SafeName}}.AddComponent<RectTransform>();
+    rt_sl_{{SafeName}}.anchorMin = Vector2.zero;
+    rt_sl_{{SafeName}}.anchorMax = Vector2.one;
+    rt_sl_{{SafeName}}.sizeDelta = new Vector2(-20, -20);
+    
+    var ha_{{SafeName}} = new GameObject("Handle");
+    ha_{{SafeName}}.transform.SetParent(sl_{{SafeName}}.transform, false);
+    var rt_ha_{{SafeName}} = ha_{{SafeName}}.AddComponent<RectTransform>();
+    rt_ha_{{SafeName}}.sizeDelta = new Vector2(20, 20);
+    var img_ha_{{SafeName}} = ha_{{SafeName}}.AddComponent<Image>();
+    img_ha_{{SafeName}}.color = new Color(0.8f, 0.8f, 0.8f, 1f);
+    scrollbar_{{SafeName}}.targetGraphic = img_ha_{{SafeName}};
+    scrollbar_{{SafeName}}.handleRect = rt_ha_{{SafeName}};
+    
+    scroll_{{SafeName}}.verticalScrollbar = scrollbar_{{SafeName}};
+    scroll_{{SafeName}}.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.{{ScrollVisibility}};
+    scroll_{{SafeName}}.verticalScrollbarSpacing = -3;
+    rt_vp_{{SafeName}}.offsetMax = new Vector2(-20, 0);

@@ -1,0 +1,13 @@
+    // Layout Group: {{Name}}
+    var go_{{SafeName}} = new GameObject("{{Name}}");
+    go_{{SafeName}}.transform.SetParent({{Parent}}, false);
+    var rt_go_{{SafeName}} = go_{{SafeName}}.AddComponent<RectTransform>();
+    ui.MoveTransform(rt_go_{{SafeName}}, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}});
+    var lg_{{SafeName}} = go_{{SafeName}}.AddComponent<{{GroupType}}>();
+    lg_{{SafeName}}.padding = new RectOffset({{PaddingLeft}}, {{PaddingRight}}, {{PaddingTop}}, {{PaddingBottom}});
+    lg_{{SafeName}}.spacing = {{Spacing}}f;
+    lg_{{SafeName}}.childAlignment = TextAnchor.{{Alignment}};
+    lg_{{SafeName}}.childControlWidth = {{ChildControlWidth}};
+    lg_{{SafeName}}.childControlHeight = {{ChildControlHeight}};
+    lg_{{SafeName}}.childForceExpandWidth = {{ChildForceExpandWidth}};
+    lg_{{SafeName}}.childForceExpandHeight = {{ChildForceExpandHeight}};

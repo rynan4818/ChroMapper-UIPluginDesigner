@@ -1,0 +1,1 @@
+    ui.AddTextInput({{Parent}}, "{{Name}}", "{{Text}}", TextAlignmentOptions.Left, {{FontSize}}, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}}, (val) => {});

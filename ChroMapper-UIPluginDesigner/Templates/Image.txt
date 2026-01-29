@@ -1,0 +1,5 @@
+    var img_{{SafeName}} = new GameObject("{{Name}}", typeof(RectTransform));
+    img_{{SafeName}}.transform.SetParent({{Parent}}, false);
+    ui.MoveTransform(img_{{SafeName}}.transform, {{Width}}, {{Height}}, 0.5f, 0.5f, {{PosX}}, {{PosY}});
+    ColorUtility.TryParseHtmlString("{{HexColor}}", out var col_img_{{SafeName}});
+    ui.AttachSimpleImage(img_{{SafeName}}, col_img_{{SafeName}});

@@ -58,6 +58,36 @@
         },
         {
             "Type" : "Button",
+            "Name" : "AddRadioButton",
+            "Text" : "+ Radio",
+            "AnchorPosX" : 43,
+            "AnchorPosY" : 145,
+            "SizeX" : 33,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "AddSlider",
+            "Text" : "+ Slider",
+            "AnchorPosX" : -40,
+            "AnchorPosY" : 115,
+            "SizeX" : 42,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "AddImage",
+            "Text" : "+ Image",
+            "AnchorPosX" : 3,
+            "AnchorPosY" : 115,
+            "SizeX" : 42,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
             "Name" : "AddVerticalLayout",
             "Text" : "+ VLayout",
             "AnchorPosX" : -40,
@@ -77,11 +107,21 @@
             "FontSize" : 8
         },
         {
+            "Type" : "Button",
+            "Name" : "AddScrollRect",
+            "Text" : "+ Scroll",
+            "AnchorPosX" : 46,
+            "AnchorPosY" : 130,
+            "SizeX" : 40,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
             "Type" : "Dropdown",
             "Name" : "HierarchyDropdown",
             "Text" : "",
             "AnchorPosX" : 0,
-            "AnchorPosY" : 110,
+            "AnchorPosY" : 100,
             "SizeX" : 130,
             "SizeY" : 18,
             "FontSize" : 9
@@ -91,7 +131,7 @@
             "Name" : "PathLabel",
             "Text" : "Root > ...",
             "AnchorPosX" : 0,
-            "AnchorPosY" : 93,
+            "AnchorPosY" : 88,
             "SizeX" : 130,
             "SizeY" : 12,
             "FontSize" : 8
@@ -503,6 +543,45 @@
         },
         {
             "Type" : "Checkbox", "Name" : "ChF_H", "AnchorPosX" : 55, "AnchorPosY" : -186, "SizeX" : 12, "SizeY" : 12
+        },
+        
+        {
+            "Type" : "Label", "Name" : "LabelScrollSens", "Text" : "Sensitivity", "AnchorPosX" : -35, "AnchorPosY" : -200, "SizeX" : 40, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput", "Name" : "ScrollSens", "Text" : "20", "AnchorPosX" : 20, "AnchorPosY" : -200, "SizeX" : 40, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label", "Name" : "LabelScrollVis", "Text" : "Scrollbar Vis", "AnchorPosX" : -20, "AnchorPosY" : -214, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Dropdown", "Name" : "ScrollVis", "Text" : "", "AnchorPosX" : 35, "AnchorPosY" : -214, "SizeX" : 60, "SizeY" : 18, "FontSize" : 8
+        },
+        
+        {
+            "Type" : "Label", "Name" : "LabelMinV", "Text" : "Min", "AnchorPosX" : -50, "AnchorPosY" : -228, "SizeX" : 20, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput", "Name" : "MinV", "Text" : "0", "AnchorPosX" : -30, "AnchorPosY" : -228, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label", "Name" : "LabelMaxV", "Text" : "Max", "AnchorPosX" : -5, "AnchorPosY" : -228, "SizeX" : 20, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput", "Name" : "MaxV", "Text" : "1", "AnchorPosX" : 15, "AnchorPosY" : -228, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label", "Name" : "LabelIsInt", "Text" : "Int", "AnchorPosX" : 35, "AnchorPosY" : -228, "SizeX" : 15, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox", "Name" : "IsInt", "AnchorPosX" : 48, "AnchorPosY" : -228, "SizeX" : 12, "SizeY" : 12
+        },
+
+        {
+            "Type" : "Label", "Name" : "LabelHexColor", "Text" : "Color (#RRGGBB)", "AnchorPosX" : -20, "AnchorPosY" : -242, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput", "Name" : "HexColor", "Text" : "#FFFFFF", "AnchorPosX" : 35, "AnchorPosY" : -242, "SizeX" : 60, "SizeY" : 14, "FontSize" : 8
         }
     ]
 }

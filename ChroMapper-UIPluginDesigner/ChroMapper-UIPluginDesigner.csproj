@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="editor_layout.json" />
+    <EmbeddedResource Include="Templates\**" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
