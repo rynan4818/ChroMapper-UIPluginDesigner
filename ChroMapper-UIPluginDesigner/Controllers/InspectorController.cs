@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ChroMapper_UIPluginDesigner.Constants;
 using ChroMapper_UIPluginDesigner.UserResources;
+using ChroMapper_UIPluginDesigner.Components;
 
 namespace ChroMapper_UIPluginDesigner.Controllers
 {

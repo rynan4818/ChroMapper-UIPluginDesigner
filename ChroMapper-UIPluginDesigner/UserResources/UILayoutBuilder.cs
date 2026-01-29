@@ -62,15 +62,17 @@ namespace ChroMapper_UIPluginDesigner.UserResources
                     obj = tgl.gameObject;
                     break;
                 case ElementType.RadioButton:
-                    var radio = _ui.AddCheckbox(currentParent, false, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, null);
-                    obj = radio.gameObject;
-                    
-                    // Add ToggleGroup to parent if missing
-                    var group = currentParent.GetComponent<ToggleGroup>() ?? currentParent.gameObject.AddComponent<ToggleGroup>();
-                    radio.group = group;
+                    {
+                        var radio = _ui.AddCheckbox(currentParent, false, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, null);
+                        obj = radio.gameObject;
 
-                    // ChroMapper's Toggle often needs a text label
-                    _ui.AddLabel(obj.transform, el.Name + "_Label", el.Text, el.SizeX - 20, el.SizeY, 0, 0.5f, 60, 0, TextAlignmentOptions.Left, 12, 0, 0.5f);
+                        // Add ToggleGroup to parent if missing
+                        var group = currentParent.GetComponent<ToggleGroup>() ?? currentParent.gameObject.AddComponent<ToggleGroup>();
+                        radio.group = group;
+
+                        // ChroMapper's Toggle often needs a text label
+                        _ui.AddLabel(obj.transform, el.Name + "_Label", el.Text, el.SizeX - 20, el.SizeY, 0, 0.5f, 60, 0, TextAlignmentOptions.Left, 12, 0, 0.5f);
+                    }
                     break;
                 case ElementType.Slider:
                     var slider = _ui.AddSlider(currentParent, el.Name, el.MinValue, el.MinValue, el.MaxValue, el.IsInteger, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, null);
@@ -86,33 +88,35 @@ namespace ChroMapper_UIPluginDesigner.UserResources
                     break;
                 case ElementType.VerticalLayout:
                 case ElementType.HorizontalLayout:
-                    obj = new GameObject(el.Name);
-                    var rt = obj.AddComponent<RectTransform>();
-                    rt.SetParent(currentParent);
-                    _ui.MoveTransform(rt, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY);
-                    
-                    // 背景用にImageを追加（透明にするか、デバッグ用に見えるようにするかは要検討だが、一旦透明に近い色で）
-                     var img = obj.AddComponent<Image>();
-                    img.color = new Color(0, 0, 0, 0.2f); // 少し見えるようにして配置を確認しやすくする
-
-                    HorizontalOrVerticalLayoutGroup group = null;
-                    if (el.Type == ElementType.VerticalLayout)
-                        group = obj.AddComponent<VerticalLayoutGroup>();
-                    else
-                        group = obj.AddComponent<HorizontalLayoutGroup>();
-
-                    group.padding = new RectOffset(el.PaddingLeft, el.PaddingRight, el.PaddingTop, el.PaddingBottom);
-                    group.spacing = el.Spacing;
-                    group.childAlignment = el.Alignment;
-                    group.childControlWidth = el.ChildControlWidth;
-                    group.childControlHeight = el.ChildControlHeight;
-                    group.childForceExpandWidth = el.ChildForceExpandWidth;
-                    group.childForceExpandHeight = el.ChildForceExpandHeight;
-                    
-                    // 子要素の再帰的生成
-                    foreach (var childData in el.Children)
                     {
-                        BuildElement(childData, obj.transform);
+                        obj = new GameObject(el.Name);
+                        var rt = obj.AddComponent<RectTransform>();
+                        rt.SetParent(currentParent);
+                        _ui.MoveTransform(rt, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY);
+
+                        // 背景用にImageを追加（透明にするか、デバッグ用に見えるようにするかは要検討だが、一旦透明に近い色で）
+                        var img = obj.AddComponent<Image>();
+                        img.color = new Color(0, 0, 0, 0.2f); // 少し見えるようにして配置を確認しやすくする
+
+                        HorizontalOrVerticalLayoutGroup group = null;
+                        if (el.Type == ElementType.VerticalLayout)
+                            group = obj.AddComponent<VerticalLayoutGroup>();
+                        else
+                            group = obj.AddComponent<HorizontalLayoutGroup>();
+
+                        group.padding = new RectOffset(el.PaddingLeft, el.PaddingRight, el.PaddingTop, el.PaddingBottom);
+                        group.spacing = el.Spacing;
+                        group.childAlignment = el.Alignment;
+                        group.childControlWidth = el.ChildControlWidth;
+                        group.childControlHeight = el.ChildControlHeight;
+                        group.childForceExpandWidth = el.ChildForceExpandWidth;
+                        group.childForceExpandHeight = el.ChildForceExpandHeight;
+
+                        // 子要素の再帰的生成
+                        foreach (var childData in el.Children)
+                        {
+                            BuildElement(childData, obj.transform);
+                        }
                     }
                     break;
                 case ElementType.ScrollRect:

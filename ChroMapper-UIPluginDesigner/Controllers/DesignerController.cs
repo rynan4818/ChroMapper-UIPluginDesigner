@@ -73,7 +73,12 @@ namespace ChroMapper_UIPluginDesigner.Controllers
 
         private Canvas GetCanvas()
         {
-            return GameObject.Find("Canvas")?.GetComponent<Canvas>();
+            // Try standard names first
+            var canvasObj = GameObject.Find("Canvas");
+            if (canvasObj != null) return canvasObj.GetComponent<Canvas>();
+
+            // Fallback to finding any canvas (usually correct in single-canvas setups)
+            return UnityEngine.Object.FindObjectOfType<Canvas>();
         }
 
         private void CreateEditorPanel()
@@ -110,7 +115,9 @@ namespace ChroMapper_UIPluginDesigner.Controllers
             float py = root[UILayoutMap.KeyPanelPosY].AsFloat;
 
             Ui.MoveTransform(_editorPanel.transform, w, h, ax, ay, px, py);
-            _editorPanel.AddComponent<SimpleDrag>(); // パネル自体をドラッグ可能にする
+            var drag = _editorPanel.AddComponent<SimpleDrag>(); // パネル自体をドラッグ可能にする
+            drag.Target = _editorPanel.GetComponent<RectTransform>();
+            drag.Canvas = canvas;
 
             // UILayoutBuilderを使ってエディタUIを構築
             var builder = new UILayoutBuilder(Ui, _editorPanel.transform);
@@ -171,6 +178,12 @@ namespace ChroMapper_UIPluginDesigner.Controllers
             if (builder.GetObject(DesignerConstants.NameDeleteElement) != null) builder.Get<Button>(DesignerConstants.NameDeleteElement).onClick.AddListener(DeleteSelectedElement);
             if (builder.GetObject(DesignerConstants.NameCopyElement) != null) builder.Get<Button>(DesignerConstants.NameCopyElement).onClick.AddListener(CopySelectedElement);
 
+            // Move Actions
+            if (builder.GetObject(DesignerConstants.NameMoveUp) != null) builder.Get<Button>(DesignerConstants.NameMoveUp).onClick.AddListener(() => MoveAllElements(0, 1));
+            if (builder.GetObject(DesignerConstants.NameMoveDown) != null) builder.Get<Button>(DesignerConstants.NameMoveDown).onClick.AddListener(() => MoveAllElements(0, -1));
+            if (builder.GetObject(DesignerConstants.NameMoveLeft) != null) builder.Get<Button>(DesignerConstants.NameMoveLeft).onClick.AddListener(() => MoveAllElements(-1, 0));
+            if (builder.GetObject(DesignerConstants.NameMoveRight) != null) builder.Get<Button>(DesignerConstants.NameMoveRight).onClick.AddListener(() => MoveAllElements(1, 0));
+
             // Initialize Inspector
             _inspector.Initialize(builder, OnElementUpdated);
         }
@@ -182,6 +195,29 @@ namespace ChroMapper_UIPluginDesigner.Controllers
                                 UpdateHierarchyDropdown();
                                 UpdatePathDisplay(_selectedElement);
                             }
+
+        private void MoveAllElements(float x, float y)
+        {
+            foreach (var el in _elements)
+            {
+                el.AnchorPosX += x;
+                el.AnchorPosY += y;
+            }
+            RefreshPreview();
+            
+            // If inspector is showing an element, its inputs might need update?
+            // Inspector usually binds to the ElementData object directly, but if we change values programmatically, 
+            // the InputFields in Inspector might not reflect it unless we refresh Inspector inputs.
+            // But ElementData is reference type. 
+            // However, InputFields show the value at the time of binding/update.
+            // If selected element is moved, we should update Inspector.
+            
+            if (_selectedElement != null)
+            {
+                 // Re-select to refresh inspector values
+                 _inspector.SelectElement(_selectedElement, _elements);
+            }
+        }
                                     private UITextInput BindMenuInput(UILayoutBuilder builder, string name, UnityEngine.Events.UnityAction action)
                 {
                     var input = builder.Get<UITextInput>(name);
@@ -322,29 +358,7 @@ namespace ChroMapper_UIPluginDesigner.Controllers
             RefreshPreview();
         }
 
-        private void DeleteSelectedElement()
-        {
-            if (_selectedElement == null) return;
-            
-            // Try remove from root
-            if (_elements.Contains(_selectedElement))
-            {
-                _elements.Remove(_selectedElement);
-            }
-            else
-            {
-                // Try remove from children
-                var parent = FindParent(_elements, _selectedElement);
-                if (parent != null)
-                {
-                    parent.Children.Remove(_selectedElement);
-                }
-            }
 
-            _selectedElement = null;
-            _inspector.ClearSelection();
-            RefreshPreview();
-        }
 
         private ElementData FindParent(List<ElementData> nodes, ElementData target)
         {
@@ -464,25 +478,25 @@ namespace ChroMapper_UIPluginDesigner.Controllers
                         _ignoreDropdownChange = false;
                     }
                 }
-                        private void DeleteSelectedElement()
-                        {
-                            if (_selectedElement == null) return;
-                            
-                            // Try remove from root
-                            if (_elements.Contains(_selectedElement))
-                            {
-                                _elements.Remove(_selectedElement);
-                            }
-                            else
-                            {
-                                // Try remove from children
-                                var parent = FindParent(_elements, _selectedElement);
-                                if (parent != null)
-                                {
-                                    parent.Children.Remove(_selectedElement);
-                                }
-                            }
-                
+        private void DeleteSelectedElement()
+        {
+            if (_selectedElement == null) return;
+
+            // Try remove from root
+            if (_elements.Contains(_selectedElement))
+            {
+                _elements.Remove(_selectedElement);
+            }
+            else
+            {
+                // Try remove from children
+                var parent = FindParent(_elements, _selectedElement);
+                if (parent != null)
+                {
+                    parent.Children.Remove(_selectedElement);
+                }
+            }
+
             _selectedElement = null;
             _inspector.ClearSelection();
             RefreshPreview();

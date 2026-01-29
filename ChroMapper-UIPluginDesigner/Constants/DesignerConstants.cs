@@ -50,6 +50,11 @@ namespace ChroMapper_UIPluginDesigner.Constants
         public const string NameMenuAnchorX = "MenuAnchorX";
         public const string NameMenuAnchorY = "MenuAnchorY";
 
+        public const string NameMoveUp = "MoveUp";
+        public const string NameMoveDown = "MoveDown";
+        public const string NameMoveLeft = "MoveLeft";
+        public const string NameMoveRight = "MoveRight";
+
         public const string NameDeleteElement = "DeleteElement";
         public const string NameCopyElement = "CopyElement";
 

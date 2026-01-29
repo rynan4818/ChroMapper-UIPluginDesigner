@@ -1,3 +1,5 @@
+using System;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -8,6 +10,11 @@ namespace ChroMapper_UIPluginDesigner.Components
         public Action<Vector2> OnDragDelta;
         public Action<PointerEventData> OnDragEnd;
         public Canvas Canvas;
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            // Optional: Add logic if needed, otherwise leave empty or handle initialization
+        }
 
         public void OnDrag(PointerEventData eventData)
         {

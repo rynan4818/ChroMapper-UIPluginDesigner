@@ -39,12 +39,12 @@ namespace ChroMapper_UIPluginDesigner.Components
                 AdjustValue(-Increment);
                 _nextRepeatTime = Time.unscaledTime + RepeatRate;
             }
+        }
 
-            // Mouse Scroll
-            if (Input.mouseScrollDelta.y != 0)
-            {
-                AdjustValue(Input.mouseScrollDelta.y * Increment);
-            }
+        public void OnScroll(PointerEventData eventData)
+        {
+            if (InputField == null || !InputField.isFocused) return;
+            AdjustValue(eventData.scrollDelta.y * Increment);
         }
 
         private void AdjustValue(float delta)

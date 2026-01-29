@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using ChroMapper_UIPluginDesigner.UserResources;
+using UnityEngine.UI;
 
 namespace ChroMapper_UIPluginDesigner.Components
 {
@@ -25,6 +26,17 @@ namespace ChroMapper_UIPluginDesigner.Components
 
         public void CreateContainer(UnityAction<Vector2> onDrag)
         {
+            if (_canvas == null)
+            {
+                Debug.LogError("PreviewManager: Canvas is null!");
+                return;
+            }
+            if (_ui == null)
+            {
+                Debug.LogError("PreviewManager: HelperUI is null!");
+                return;
+            }
+
             if (_previewContainer != null) UnityEngine.Object.Destroy(_previewContainer);
 
             _previewContainer = new GameObject("PreviewContainer", typeof(RectTransform));
@@ -126,11 +138,13 @@ namespace ChroMapper_UIPluginDesigner.Components
                         obj = tgl.gameObject;
                         break;
                     case ElementType.RadioButton:
-                        var radio = _ui.AddCheckbox(parent, false, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { if(v) onSelect(el); });
-                        obj = radio.gameObject;
-                        var group = parent.GetComponent<ToggleGroup>() ?? parent.gameObject.AddComponent<ToggleGroup>();
-                        radio.group = group;
-                        _ui.AddLabel(obj.transform, el.Name + "_Label", el.Text, el.SizeX - 20, el.SizeY, 0, 0.5f, 60, 0, TextAlignmentOptions.Left, 12, 0, 0.5f);
+                        {
+                            var radio = _ui.AddCheckbox(parent, false, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { if(v) onSelect(el); });
+                            obj = radio.gameObject;
+                            var group = parent.GetComponent<ToggleGroup>() ?? parent.gameObject.AddComponent<ToggleGroup>();
+                            radio.group = group;
+                            _ui.AddLabel(obj.transform, el.Name + "_Label", el.Text, el.SizeX - 20, el.SizeY, 0, 0.5f, 60, 0, TextAlignmentOptions.Left, 12, 0, 0.5f);
+                        }
                         break;
                     case ElementType.Slider:
                         var slider = _ui.AddSlider(parent, el.Name, el.MinValue, el.MinValue, el.MaxValue, el.IsInteger, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
@@ -146,37 +160,40 @@ namespace ChroMapper_UIPluginDesigner.Components
                         break;
                     case ElementType.VerticalLayout:
                     case ElementType.HorizontalLayout:
-                        obj = new GameObject(el.Name);
-                        var rt = obj.AddComponent<RectTransform>();
-                        rt.SetParent(parent);
-                        _ui.MoveTransform(rt, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY);
-                        
-                        var img = obj.AddComponent<Image>();
-                        img.color = new Color(1, 1, 1, 0.1f); // Visual feedback for layout group
+                        {
+                            obj = new GameObject(el.Name);
+                            var rt = obj.AddComponent<RectTransform>();
+                            rt.SetParent(parent);
+                            _ui.MoveTransform(rt, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY);
 
-                        UnityEngine.UI.HorizontalOrVerticalLayoutGroup group = null;
-                        if (el.Type == ElementType.VerticalLayout)
-                            group = obj.AddComponent<VerticalLayoutGroup>();
-                        else
-                            group = obj.AddComponent<HorizontalLayoutGroup>();
+                            var img = obj.AddComponent<Image>();
+                            img.color = new Color(1, 1, 1, 0.1f); // Visual feedback for layout group
 
-                        group.padding = new RectOffset(el.PaddingLeft, el.PaddingRight, el.PaddingTop, el.PaddingBottom);
-                        group.spacing = el.Spacing;
-                        group.childAlignment = el.Alignment;
-                        group.childControlWidth = el.ChildControlWidth;
-                        group.childControlHeight = el.ChildControlHeight;
-                        group.childForceExpandWidth = el.ChildForceExpandWidth;
-                        group.childForceExpandHeight = el.ChildForceExpandHeight;
+                            UnityEngine.UI.HorizontalOrVerticalLayoutGroup group = null;
+                            if (el.Type == ElementType.VerticalLayout)
+                                group = obj.AddComponent<VerticalLayoutGroup>();
+                            else
+                                group = obj.AddComponent<HorizontalLayoutGroup>();
 
-                        // Click to select layout group
-                        var triggerLG = obj.AddComponent<EventTrigger>();
-                        var entryLG = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
-                        entryLG.callback.AddListener((data) => {
-                             onSelect(el);
-                        });
-                        triggerLG.triggers.Add(entryLG);
+                            group.padding = new RectOffset(el.PaddingLeft, el.PaddingRight, el.PaddingTop, el.PaddingBottom);
+                            group.spacing = el.Spacing;
+                            group.childAlignment = el.Alignment;
+                            group.childControlWidth = el.ChildControlWidth;
+                            group.childControlHeight = el.ChildControlHeight;
+                            group.childForceExpandWidth = el.ChildForceExpandWidth;
+                            group.childForceExpandHeight = el.ChildForceExpandHeight;
 
-                        BuildElementsRecursive(el.Children, obj.transform, selectedElement, onSelect, onUpdate, onReparent);
+                            // Click to select layout group
+                            var triggerLG = obj.AddComponent<EventTrigger>();
+                            var entryLG = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+                            entryLG.callback.AddListener((data) =>
+                            {
+                                onSelect(el);
+                            });
+                            triggerLG.triggers.Add(entryLG);
+
+                            BuildElementsRecursive(el.Children, obj.transform, selectedElement, onSelect, onUpdate, onReparent);
+                        }
                         break;
                     case ElementType.ScrollRect:
                         obj = new GameObject(el.Name);

@@ -1,17 +1,17 @@
 {
-    "PanelWidth" : 140,
-    "PanelHeight" : 380,
+    "PanelWidth" : 200,
+    "PanelHeight" : 296,
     "PanelAnchorX" : 0,
     "PanelAnchorY" : 0.5,
-    "PanelPosX" : 63,
-    "PanelPosY" : 168,
+    "PanelPosX" : 96,
+    "PanelPosY" : 148,
     "Elements" : [
         {
             "Type" : "Button",
             "Name" : "AddButton",
             "Text" : "+ Button",
-            "AnchorPosX" : -44,
-            "AnchorPosY" : 160,
+            "AnchorPosX" : -80,
+            "AnchorPosY" : 138,
             "SizeX" : 33,
             "SizeY" : 14,
             "FontSize" : 8
@@ -20,8 +20,8 @@
             "Type" : "Button",
             "Name" : "AddLabel",
             "Text" : "+ Label",
-            "AnchorPosX" : -8,
-            "AnchorPosY" : 160,
+            "AnchorPosX" : -47,
+            "AnchorPosY" : 138,
             "SizeX" : 31,
             "SizeY" : 14,
             "FontSize" : 8
@@ -30,9 +30,19 @@
             "Type" : "Button",
             "Name" : "AddInput",
             "Text" : "+ Input",
-            "AnchorPosX" : 24,
-            "AnchorPosY" : 160,
+            "AnchorPosX" : -16,
+            "AnchorPosY" : 138,
             "SizeX" : 31,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "AddRadioButton",
+            "Text" : "+ Radio",
+            "AnchorPosX" : 15,
+            "AnchorPosY" : 138,
+            "SizeX" : 33,
             "SizeY" : 14,
             "FontSize" : 8
         },
@@ -40,8 +50,8 @@
             "Type" : "Button",
             "Name" : "AddDropdown",
             "Text" : "+ Dropdown",
-            "AnchorPosX" : -40,
-            "AnchorPosY" : 145,
+            "AnchorPosX" : 53,
+            "AnchorPosY" : 138,
             "SizeX" : 42,
             "SizeY" : 14,
             "FontSize" : 8
@@ -50,19 +60,9 @@
             "Type" : "Button",
             "Name" : "AddCheckbox",
             "Text" : "+ Checkbox",
-            "AnchorPosX" : 3,
-            "AnchorPosY" : 145,
+            "AnchorPosX" : -76,
+            "AnchorPosY" : 124,
             "SizeX" : 40,
-            "SizeY" : 14,
-            "FontSize" : 8
-        },
-        {
-            "Type" : "Button",
-            "Name" : "AddRadioButton",
-            "Text" : "+ Radio",
-            "AnchorPosX" : 43,
-            "AnchorPosY" : 145,
-            "SizeX" : 33,
             "SizeY" : 14,
             "FontSize" : 8
         },
@@ -70,19 +70,9 @@
             "Type" : "Button",
             "Name" : "AddSlider",
             "Text" : "+ Slider",
-            "AnchorPosX" : -40,
-            "AnchorPosY" : 115,
-            "SizeX" : 42,
-            "SizeY" : 14,
-            "FontSize" : 8
-        },
-        {
-            "Type" : "Button",
-            "Name" : "AddImage",
-            "Text" : "+ Image",
-            "AnchorPosX" : 3,
-            "AnchorPosY" : 115,
-            "SizeX" : 42,
+            "AnchorPosX" : -41,
+            "AnchorPosY" : 124,
+            "SizeX" : 30,
             "SizeY" : 14,
             "FontSize" : 8
         },
@@ -90,9 +80,9 @@
             "Type" : "Button",
             "Name" : "AddVerticalLayout",
             "Text" : "+ VLayout",
-            "AnchorPosX" : -40,
-            "AnchorPosY" : 130,
-            "SizeX" : 42,
+            "AnchorPosX" : -9,
+            "AnchorPosY" : 124,
+            "SizeX" : 36,
             "SizeY" : 14,
             "FontSize" : 8
         },
@@ -100,9 +90,9 @@
             "Type" : "Button",
             "Name" : "AddHorizontalLayout",
             "Text" : "+ HLayout",
-            "AnchorPosX" : 3,
-            "AnchorPosY" : 130,
-            "SizeX" : 42,
+            "AnchorPosX" : 28,
+            "AnchorPosY" : 124,
+            "SizeX" : 36,
             "SizeY" : 14,
             "FontSize" : 8
         },
@@ -110,38 +100,28 @@
             "Type" : "Button",
             "Name" : "AddScrollRect",
             "Text" : "+ Scroll",
-            "AnchorPosX" : 46,
-            "AnchorPosY" : 130,
-            "SizeX" : 40,
+            "AnchorPosX" : 63,
+            "AnchorPosY" : 124,
+            "SizeX" : 34,
             "SizeY" : 14,
             "FontSize" : 8
         },
         {
-            "Type" : "Dropdown",
-            "Name" : "HierarchyDropdown",
-            "Text" : "",
-            "AnchorPosX" : 0,
-            "AnchorPosY" : 100,
-            "SizeX" : 130,
-            "SizeY" : 18,
-            "FontSize" : 9
-        },
-        {
-            "Type" : "Label",
-            "Name" : "PathLabel",
-            "Text" : "Root > ...",
-            "AnchorPosX" : 0,
-            "AnchorPosY" : 88,
-            "SizeX" : 130,
-            "SizeY" : 12,
+            "Type" : "Button",
+            "Name" : "AddImage",
+            "Text" : "+ Image",
+            "AnchorPosX" : -78,
+            "AnchorPosY" : 110,
+            "SizeX" : 36,
+            "SizeY" : 14,
             "FontSize" : 8
         },
         {
             "Type" : "Button",
             "Name" : "Save",
             "Text" : "Save",
-            "AnchorPosX" : -50,
-            "AnchorPosY" : 75,
+            "AnchorPosX" : -43,
+            "AnchorPosY" : 110,
             "SizeX" : 23,
             "SizeY" : 12,
             "FontSize" : 7
@@ -150,8 +130,8 @@
             "Type" : "Button",
             "Name" : "Load",
             "Text" : "Load",
-            "AnchorPosX" : -26,
-            "AnchorPosY" : 75,
+            "AnchorPosX" : -19,
+            "AnchorPosY" : 110,
             "SizeX" : 22,
             "SizeY" : 12,
             "FontSize" : 7
@@ -160,19 +140,9 @@
             "Type" : "Button",
             "Name" : "Export",
             "Text" : "Export Code",
-            "AnchorPosX" : 8,
-            "AnchorPosY" : 75,
+            "AnchorPosX" : 16,
+            "AnchorPosY" : 110,
             "SizeX" : 41,
-            "SizeY" : 12,
-            "FontSize" : 7
-        },
-        {
-            "Type" : "Button",
-            "Name" : "Close",
-            "Text" : "Close",
-            "AnchorPosX" : 51,
-            "AnchorPosY" : -180,
-            "SizeX" : 28,
             "SizeY" : 12,
             "FontSize" : 7
         },
@@ -180,8 +150,8 @@
             "Type" : "Label",
             "Name" : "MenuSizeL",
             "Text" : "Menu Size",
-            "AnchorPosX" : -38,
-            "AnchorPosY" : 60,
+            "AnchorPosX" : -70,
+            "AnchorPosY" : 97,
             "SizeX" : 100,
             "SizeY" : 14,
             "FontSize" : 8
@@ -190,8 +160,8 @@
             "Type" : "TextInput",
             "Name" : "MenuW",
             "Text" : "250",
-            "AnchorPosX" : -49,
-            "AnchorPosY" : 47,
+            "AnchorPosX" : -85,
+            "AnchorPosY" : 84,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 8
@@ -200,28 +170,18 @@
             "Type" : "TextInput",
             "Name" : "MenuH",
             "Text" : "190",
-            "AnchorPosX" : -25,
-            "AnchorPosY" : 47,
+            "AnchorPosX" : -60,
+            "AnchorPosY" : 85,
             "SizeX" : 22,
             "SizeY" : 17,
-            "FontSize" : 9
-        },
-        {
-            "Type" : "Label",
-            "Name" : "MenuPosL",
-            "Text" : "Menu Pos",
-            "AnchorPosX" : 18,
-            "AnchorPosY" : 59,
-            "SizeX" : 100,
-            "SizeY" : 14,
             "FontSize" : 9
         },
         {
             "Type" : "TextInput",
             "Name" : "MenuX",
             "Text" : "70",
-            "AnchorPosX" : 7,
-            "AnchorPosY" : 46,
+            "AnchorPosX" : -30,
+            "AnchorPosY" : 84,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -230,28 +190,28 @@
             "Type" : "TextInput",
             "Name" : "MenuY",
             "Text" : "180",
-            "AnchorPosX" : 31,
-            "AnchorPosY" : 46,
+            "AnchorPosX" : -5,
+            "AnchorPosY" : 84,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
         },
         {
             "Type" : "Label",
-            "Name" : "MenuAnchorL",
-            "Text" : "Menu Anchor",
-            "AnchorPosX" : -37,
-            "AnchorPosY" : 33,
+            "Name" : "MenuPosL",
+            "Text" : "Menu Pos",
+            "AnchorPosX" : -16,
+            "AnchorPosY" : 96,
             "SizeX" : 100,
             "SizeY" : 14,
-            "FontSize" : 8
+            "FontSize" : 9
         },
         {
             "Type" : "TextInput",
             "Name" : "MenuAnchorX",
             "Text" : "0.5",
-            "AnchorPosX" : -48,
-            "AnchorPosY" : 20,
+            "AnchorPosX" : 25,
+            "AnchorPosY" : 84,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -260,28 +220,48 @@
             "Type" : "TextInput",
             "Name" : "MenuAnchorY",
             "Text" : "0.5",
-            "AnchorPosX" : -24,
-            "AnchorPosY" : 20,
+            "AnchorPosX" : 51,
+            "AnchorPosY" : 85,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
         },
         {
             "Type" : "Label",
-            "Name" : "InspTitle",
-            "Text" : "Inspector",
-            "AnchorPosX" : -4,
-            "AnchorPosY" : 5,
-            "SizeX" : 80,
+            "Name" : "MenuAnchorL",
+            "Text" : "Menu Anchor",
+            "AnchorPosX" : 37,
+            "AnchorPosY" : 98,
+            "SizeX" : 100,
             "SizeY" : 14,
-            "FontSize" : 7
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "PathLabel",
+            "Text" : "Root > ...",
+            "AnchorPosX" : -80,
+            "AnchorPosY" : 66,
+            "SizeX" : 130,
+            "SizeY" : 12,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Dropdown",
+            "Name" : "HierarchyDropdown",
+            "Text" : "",
+            "AnchorPosX" : -38,
+            "AnchorPosY" : 53,
+            "SizeX" : 106,
+            "SizeY" : 18,
+            "FontSize" : 9
         },
         {
             "Type" : "Button",
             "Name" : "DeleteElement",
             "Text" : "DEL",
-            "AnchorPosX" : 9,
-            "AnchorPosY" : 18,
+            "AnchorPosX" : 31,
+            "AnchorPosY" : 53,
             "SizeX" : 21,
             "SizeY" : 14,
             "FontSize" : 7
@@ -290,38 +270,28 @@
             "Type" : "Button",
             "Name" : "CopyElement",
             "Text" : "COPY",
-            "AnchorPosX" : 34,
-            "AnchorPosY" : 18,
+            "AnchorPosX" : 57,
+            "AnchorPosY" : 53,
             "SizeX" : 27,
             "SizeY" : 14,
             "FontSize" : 7
         },
         {
-            "Type" : "Label",
-            "Name" : "Name_L",
-            "Text" : "Name",
-            "AnchorPosX" : -49,
-            "AnchorPosY" : -14,
-            "SizeX" : 40,
-            "SizeY" : 12,
-            "FontSize" : 10
-        },
-        {
             "Type" : "TextInput",
             "Name" : "Name_I",
             "Text" : "",
-            "AnchorPosX" : -3,
-            "AnchorPosY" : -11,
+            "AnchorPosX" : -38,
+            "AnchorPosY" : 22,
             "SizeX" : 68,
             "SizeY" : 17,
             "FontSize" : 9
         },
         {
             "Type" : "Label",
-            "Name" : "Text_L",
-            "Text" : "Text",
-            "AnchorPosX" : -47,
-            "AnchorPosY" : -32,
+            "Name" : "Name_L",
+            "Text" : "Name",
+            "AnchorPosX" : -83,
+            "AnchorPosY" : 22,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 10
@@ -330,18 +300,28 @@
             "Type" : "TextInput",
             "Name" : "Text_I",
             "Text" : "",
-            "AnchorPosX" : -2,
-            "AnchorPosY" : -31,
+            "AnchorPosX" : 56,
+            "AnchorPosY" : 22,
             "SizeX" : 68,
             "SizeY" : 17,
             "FontSize" : 9
         },
         {
             "Type" : "Label",
+            "Name" : "Text_L",
+            "Text" : "Text",
+            "AnchorPosX" : 10,
+            "AnchorPosY" : 22,
+            "SizeX" : 40,
+            "SizeY" : 12,
+            "FontSize" : 10
+        },
+        {
+            "Type" : "Label",
             "Name" : "PosX_L",
             "Text" : "Pos X",
-            "AnchorPosX" : -51,
-            "AnchorPosY" : -51,
+            "AnchorPosX" : -86,
+            "AnchorPosY" : 2,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -350,8 +330,18 @@
             "Type" : "TextInput",
             "Name" : "PosX_I",
             "Text" : "",
-            "AnchorPosX" : -18,
-            "AnchorPosY" : -52,
+            "AnchorPosX" : -60,
+            "AnchorPosY" : 2,
+            "SizeX" : 35,
+            "SizeY" : 17,
+            "FontSize" : 9
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "PosY_I",
+            "Text" : "",
+            "AnchorPosX" : -19,
+            "AnchorPosY" : 2,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -359,29 +349,19 @@
         {
             "Type" : "Label",
             "Name" : "PosY_L",
-            "Text" : "Pos Y",
-            "AnchorPosX" : 13,
-            "AnchorPosY" : -53,
+            "Text" : "Y",
+            "AnchorPosX" : -40,
+            "AnchorPosY" : 2,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
         },
         {
-            "Type" : "TextInput",
-            "Name" : "PosY_I",
-            "Text" : "",
-            "AnchorPosX" : 40,
-            "AnchorPosY" : -51,
-            "SizeX" : 35,
-            "SizeY" : 17,
-            "FontSize" : 9
-        },
-        {
             "Type" : "Label",
             "Name" : "SizeW_L",
             "Text" : "Size W",
-            "AnchorPosX" : -50,
-            "AnchorPosY" : -70,
+            "AnchorPosX" : 10,
+            "AnchorPosY" : 2,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -390,8 +370,8 @@
             "Type" : "TextInput",
             "Name" : "SizeW_I",
             "Text" : "",
-            "AnchorPosX" : -18,
-            "AnchorPosY" : -69,
+            "AnchorPosX" : 36,
+            "AnchorPosY" : 2,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -399,9 +379,9 @@
         {
             "Type" : "Label",
             "Name" : "SizeH_L",
-            "Text" : "Size H",
-            "AnchorPosX" : 13,
-            "AnchorPosY" : -68,
+            "Text" : "H",
+            "AnchorPosX" : 58,
+            "AnchorPosY" : 1,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -410,8 +390,8 @@
             "Type" : "TextInput",
             "Name" : "SizeH_I",
             "Text" : "",
-            "AnchorPosX" : 40,
-            "AnchorPosY" : -68,
+            "AnchorPosX" : 78,
+            "AnchorPosY" : 2,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -420,8 +400,8 @@
             "Type" : "Label",
             "Name" : "FontSize_L",
             "Text" : "Font Size",
-            "AnchorPosX" : -49,
-            "AnchorPosY" : -88,
+            "AnchorPosX" : -82,
+            "AnchorPosY" : -17,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -430,158 +410,421 @@
             "Type" : "TextInput",
             "Name" : "FontSize_I",
             "Text" : "",
-            "AnchorPosX" : -18,
-            "AnchorPosY" : -86,
+            "AnchorPosX" : -50,
+            "AnchorPosY" : -19,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
         },
-        
+        {
+            "Type" : "Label",
+            "Name" : "InspTitle",
+            "Text" : "Inspector",
+            "AnchorPosX" : -2,
+            "AnchorPosY" : 36,
+            "SizeX" : 80,
+            "SizeY" : 14,
+            "FontSize" : 13
+        },
         {
             "Type" : "Label",
             "Name" : "LayoutTitle",
             "Text" : "Layout Group Settings",
-            "AnchorPosX" : 0,
-            "AnchorPosY" : -100,
+            "AnchorPosX" : 1,
+            "AnchorPosY" : -33,
             "SizeX" : 120,
             "SizeY" : 12,
             "FontSize" : 8
         },
         {
             "Type" : "Label",
-            "Name" : "LabelPadL", "Text" : "Pad L",
-            "AnchorPosX" : -50, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LabelPadL",
+            "Text" : "Pad L",
+            "AnchorPosX" : -86,
+            "AnchorPosY" : -44,
+            "SizeX" : 25,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
             "Type" : "TextInput",
-            "Name" : "PadL", "Text" : "0",
-            "AnchorPosX" : -20, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+            "Name" : "PadL",
+            "Text" : "0",
+            "AnchorPosX" : -65,
+            "AnchorPosY" : -45,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
         },
         {
             "Type" : "Label",
-            "Name" : "LabelPadR", "Text" : "Pad R",
-            "AnchorPosX" : 15, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LabelPadR",
+            "Text" : "Pad R",
+            "AnchorPosX" : -40,
+            "AnchorPosY" : -45,
+            "SizeX" : 25,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
             "Type" : "TextInput",
-            "Name" : "PadR", "Text" : "0",
-            "AnchorPosX" : 45, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
-        },
-        {
-            "Type" : "Label",
-            "Name" : "LabelPadT", "Text" : "Pad T",
-            "AnchorPosX" : -50, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
-        },
-        {
-            "Type" : "TextInput",
-            "Name" : "PadT", "Text" : "0",
-            "AnchorPosX" : -20, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
-        },
-        {
-            "Type" : "Label",
-            "Name" : "LabelPadB", "Text" : "Pad B",
-            "AnchorPosX" : 15, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+            "Name" : "PadR",
+            "Text" : "0",
+            "AnchorPosX" : -19,
+            "AnchorPosY" : -44,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
         },
         {
             "Type" : "TextInput",
-            "Name" : "PadB", "Text" : "0",
-            "AnchorPosX" : 45, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+            "Name" : "PadT",
+            "Text" : "0",
+            "AnchorPosX" : 26,
+            "AnchorPosY" : -43,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
         },
         {
             "Type" : "Label",
-            "Name" : "LabelSpacing", "Text" : "Spacing",
-            "AnchorPosX" : -35, "AnchorPosY" : -144, "SizeX" : 40, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LabelPadT",
+            "Text" : "Pad T",
+            "AnchorPosX" : 4,
+            "AnchorPosY" : -44,
+            "SizeX" : 25,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelPadB",
+            "Text" : "Pad B",
+            "AnchorPosX" : 48,
+            "AnchorPosY" : -44,
+            "SizeX" : 25,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
             "Type" : "TextInput",
-            "Name" : "Spacing_I", "Text" : "0",
-            "AnchorPosX" : 20, "AnchorPosY" : -144, "SizeX" : 40, "SizeY" : 14, "FontSize" : 8
+            "Name" : "PadB",
+            "Text" : "0",
+            "AnchorPosX" : 70,
+            "AnchorPosY" : -43,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
         },
-        
         {
             "Type" : "Label",
-            "Name" : "LabelAlignment", "Text" : "Child Alignment",
-            "AnchorPosX" : -20, "AnchorPosY" : -158, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LabelSpacing",
+            "Text" : "Spacing",
+            "AnchorPosX" : -83,
+            "AnchorPosY" : -60,
+            "SizeX" : 40,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "Spacing_I",
+            "Text" : "0",
+            "AnchorPosX" : -50,
+            "AnchorPosY" : -60,
+            "SizeX" : 40,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelAlignment",
+            "Text" : "Child Alignment",
+            "AnchorPosX" : -9,
+            "AnchorPosY" : -61,
+            "SizeX" : 80,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
             "Type" : "Dropdown",
-            "Name" : "ChildAlignment", "Text" : "",
-            "AnchorPosX" : 35, "AnchorPosY" : -158, "SizeX" : 60, "SizeY" : 18, "FontSize" : 8
+            "Name" : "ChildAlignment",
+            "Text" : "",
+            "AnchorPosX" : 50,
+            "AnchorPosY" : -61,
+            "SizeX" : 78,
+            "SizeY" : 18,
+            "FontSize" : 8
         },
-
         {
             "Type" : "Label",
-            "Name" : "LabelChControl", "Text" : "Control Child Size",
-            "AnchorPosX" : -20, "AnchorPosY" : -172, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LabelChControl",
+            "Text" : "Control Child Size",
+            "AnchorPosX" : -73,
+            "AnchorPosY" : -76,
+            "SizeX" : 80,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
-        {
-            "Type" : "Label", "Name" : "LblChCW", "Text" : "W", "AnchorPosX" : 25, "AnchorPosY" : -172, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
-        },
-        {
-            "Type" : "Checkbox", "Name" : "ChC_W", "AnchorPosX" : 35, "AnchorPosY" : -172, "SizeX" : 12, "SizeY" : 12
-        },
-        {
-            "Type" : "Label", "Name" : "LblChCH", "Text" : "H", "AnchorPosX" : 45, "AnchorPosY" : -172, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
-        },
-        {
-            "Type" : "Checkbox", "Name" : "ChC_H", "AnchorPosX" : 55, "AnchorPosY" : -172, "SizeX" : 12, "SizeY" : 12
-        },
-
         {
             "Type" : "Label",
-            "Name" : "LabelForceExp", "Text" : "Force Expand",
-            "AnchorPosX" : -20, "AnchorPosY" : -186, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+            "Name" : "LblChCW",
+            "Text" : "W",
+            "AnchorPosX" : -47,
+            "AnchorPosY" : -76,
+            "SizeX" : 10,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "Label", "Name" : "LblFExpW", "Text" : "W", "AnchorPosX" : 25, "AnchorPosY" : -186, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Checkbox",
+            "Name" : "ChC_W",
+            "Text" : "",
+            "AnchorPosX" : -32,
+            "AnchorPosY" : -79,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 0
         },
         {
-            "Type" : "Checkbox", "Name" : "ChF_W", "AnchorPosX" : 35, "AnchorPosY" : -186, "SizeX" : 12, "SizeY" : 12
+            "Type" : "Label",
+            "Name" : "LblChCH",
+            "Text" : "H",
+            "AnchorPosX" : -17,
+            "AnchorPosY" : -77,
+            "SizeX" : 10,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "Label", "Name" : "LblFExpH", "Text" : "H", "AnchorPosX" : 45, "AnchorPosY" : -186, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Checkbox",
+            "Name" : "ChC_H",
+            "Text" : "",
+            "AnchorPosX" : -3,
+            "AnchorPosY" : -78,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 0
         },
         {
-            "Type" : "Checkbox", "Name" : "ChF_H", "AnchorPosX" : 55, "AnchorPosY" : -186, "SizeX" : 12, "SizeY" : 12
-        },
-        
-        {
-            "Type" : "Label", "Name" : "LabelScrollSens", "Text" : "Sensitivity", "AnchorPosX" : -35, "AnchorPosY" : -200, "SizeX" : 40, "SizeY" : 10, "FontSize" : 7
-        },
-        {
-            "Type" : "TextInput", "Name" : "ScrollSens", "Text" : "20", "AnchorPosX" : 20, "AnchorPosY" : -200, "SizeX" : 40, "SizeY" : 14, "FontSize" : 8
-        },
-        {
-            "Type" : "Label", "Name" : "LabelScrollVis", "Text" : "Scrollbar Vis", "AnchorPosX" : -20, "AnchorPosY" : -214, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Label",
+            "Name" : "LabelForceExp",
+            "Text" : "Force Expand",
+            "AnchorPosX" : 25,
+            "AnchorPosY" : -77,
+            "SizeX" : 80,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "Dropdown", "Name" : "ScrollVis", "Text" : "", "AnchorPosX" : 35, "AnchorPosY" : -214, "SizeX" : 60, "SizeY" : 18, "FontSize" : 8
-        },
-        
-        {
-            "Type" : "Label", "Name" : "LabelMinV", "Text" : "Min", "AnchorPosX" : -50, "AnchorPosY" : -228, "SizeX" : 20, "SizeY" : 10, "FontSize" : 7
-        },
-        {
-            "Type" : "TextInput", "Name" : "MinV", "Text" : "0", "AnchorPosX" : -30, "AnchorPosY" : -228, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
-        },
-        {
-            "Type" : "Label", "Name" : "LabelMaxV", "Text" : "Max", "AnchorPosX" : -5, "AnchorPosY" : -228, "SizeX" : 20, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Label",
+            "Name" : "LblFExpW",
+            "Text" : "W",
+            "AnchorPosX" : 46,
+            "AnchorPosY" : -77,
+            "SizeX" : 10,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "TextInput", "Name" : "MaxV", "Text" : "1", "AnchorPosX" : 15, "AnchorPosY" : -228, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+            "Type" : "Checkbox",
+            "Name" : "ChF_W",
+            "Text" : "",
+            "AnchorPosX" : 59,
+            "AnchorPosY" : -79,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 0
         },
         {
-            "Type" : "Label", "Name" : "LabelIsInt", "Text" : "Int", "AnchorPosX" : 35, "AnchorPosY" : -228, "SizeX" : 15, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Label",
+            "Name" : "LblFExpH",
+            "Text" : "H",
+            "AnchorPosX" : 72,
+            "AnchorPosY" : -78,
+            "SizeX" : 10,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "Checkbox", "Name" : "IsInt", "AnchorPosX" : 48, "AnchorPosY" : -228, "SizeX" : 12, "SizeY" : 12
+            "Type" : "Checkbox",
+            "Name" : "ChF_H",
+            "Text" : "",
+            "AnchorPosX" : 84,
+            "AnchorPosY" : -80,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 0
         },
-
         {
-            "Type" : "Label", "Name" : "LabelHexColor", "Text" : "Color (#RRGGBB)", "AnchorPosX" : -20, "AnchorPosY" : -242, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+            "Type" : "Label",
+            "Name" : "LabelScrollSens",
+            "Text" : "Sensitivity",
+            "AnchorPosX" : -80,
+            "AnchorPosY" : -98,
+            "SizeX" : 40,
+            "SizeY" : 10,
+            "FontSize" : 7
         },
         {
-            "Type" : "TextInput", "Name" : "HexColor", "Text" : "#FFFFFF", "AnchorPosX" : 35, "AnchorPosY" : -242, "SizeX" : 60, "SizeY" : 14, "FontSize" : 8
+            "Type" : "TextInput",
+            "Name" : "ScrollSens",
+            "Text" : "20",
+            "AnchorPosX" : -46,
+            "AnchorPosY" : -99,
+            "SizeX" : 40,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Dropdown",
+            "Name" : "ScrollVis",
+            "Text" : "",
+            "AnchorPosX" : 53,
+            "AnchorPosY" : -101,
+            "SizeX" : 84,
+            "SizeY" : 18,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelScrollVis",
+            "Text" : "Scrollbar Vis",
+            "AnchorPosX" : -6,
+            "AnchorPosY" : -99,
+            "SizeX" : 80,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelMinV",
+            "Text" : "Min",
+            "AnchorPosX" : -87,
+            "AnchorPosY" : -118,
+            "SizeX" : 20,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "MinV",
+            "Text" : "0",
+            "AnchorPosX" : -69,
+            "AnchorPosY" : -118,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelMaxV",
+            "Text" : "Max",
+            "AnchorPosX" : -47,
+            "AnchorPosY" : -119,
+            "SizeX" : 20,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "MaxV",
+            "Text" : "1",
+            "AnchorPosX" : -28,
+            "AnchorPosY" : -119,
+            "SizeX" : 25,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelIsInt",
+            "Text" : "Int",
+            "AnchorPosX" : -6,
+            "AnchorPosY" : -119,
+            "SizeX" : 15,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox",
+            "Name" : "IsInt",
+            "Text" : "",
+            "AnchorPosX" : 8,
+            "AnchorPosY" : -119,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 0
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelHexColor",
+            "Text" : "Color (#RRGGBB)",
+            "AnchorPosX" : -70,
+            "AnchorPosY" : -138,
+            "SizeX" : 80,
+            "SizeY" : 10,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "HexColor",
+            "Text" : "#FFFFFF",
+            "AnchorPosX" : -15,
+            "AnchorPosY" : -137,
+            "SizeX" : 60,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "Close",
+            "Text" : "Close",
+            "AnchorPosX" : 37,
+            "AnchorPosY" : -139,
+            "SizeX" : 28,
+            "SizeY" : 12,
+            "FontSize" : 7
+        },
+        {
+            "Type" : "Button",
+            "Name" : "MoveLeft",
+            "Text" : "<",
+            "AnchorPosX" : 71,
+            "AnchorPosY" : 84,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "MoveUp",
+            "Text" : "^",
+            "AnchorPosX" : 82,
+            "AnchorPosY" : 94,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "MoveDown",
+            "Text" : "v",
+            "AnchorPosX" : 83,
+            "AnchorPosY" : 74,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "MoveRight",
+            "Text" : ">",
+            "AnchorPosX" : 93,
+            "AnchorPosY" : 84,
+            "SizeX" : 12,
+            "SizeY" : 12,
+            "FontSize" : 8
         }
     ]
 }
