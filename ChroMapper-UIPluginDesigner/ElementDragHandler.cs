@@ -7,7 +7,7 @@ namespace ChroMapper_UIPluginDesigner
     public class ElementDragHandler : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         public Action<Vector2> OnDragDelta;
-        public Action OnDragEnd;
+        public Action<PointerEventData> OnDragEnd;
         public Canvas Canvas;
 
         public void OnDrag(PointerEventData eventData)
@@ -31,7 +31,7 @@ namespace ChroMapper_UIPluginDesigner
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            OnDragEnd?.Invoke();
+            OnDragEnd?.Invoke(eventData);
         }
     }
 }

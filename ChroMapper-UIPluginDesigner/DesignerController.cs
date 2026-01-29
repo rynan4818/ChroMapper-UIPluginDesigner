@@ -25,203 +25,198 @@ namespace ChroMapper_UIPluginDesigner
         private List<ElementData> _elements = new List<ElementData>();
         private ElementData _selectedElement;
 
-        // Inspector Inputs
-        private UITextInput _inputName;
-        private UITextInput _inputText;
-        private UITextInput _inputX, _inputY, _inputW, _inputH;
-        private UITextInput _inputFontSize;
-        private UITextInput _inputMenuW, _inputMenuH, _inputMenuX, _inputMenuY;
-        private UITextInput _inputAnchorX, _inputAnchorY;
-
-        public void Start()
-        {
-            if (Ui == null) Debug.LogError("DesignerController: Plugin.ui is null in Start!");
-            
-            _fileManager = new LayoutFileManager();
-            _previewManager = new PreviewManager(Ui, GetCanvas());
-
-            CreateEditorPanel();
-            _previewManager.CreateContainer((pos) => {
-                if (_inputMenuX != null && _inputMenuX.InputField != null) _inputMenuX.InputField.SetTextWithoutNotify(pos.x.ToString("F0"));
-                if (_inputMenuY != null && _inputMenuY.InputField != null) _inputMenuY.InputField.SetTextWithoutNotify(pos.y.ToString("F0"));
-            });
-        }
-
-        public void OnDestroy()
-        {
-            if (_editorPanel != null) Destroy(_editorPanel);
-            _previewManager.Destroy();
-        }
-
-        private Canvas GetCanvas()
-        {
-            var canvasGO = GameObject.Find("Canvas");
-            if (canvasGO != null) return canvasGO.GetComponent<Canvas>();
-            return FindObjectOfType<Canvas>();
-        }
-
-        private void CreateEditorPanel()
-        {
-            var canvas = GetCanvas();
-            if (canvas == null)
-            {
-                Debug.LogError("DesignerController: Canvas not found!");
-                return;
-            }
-
-            // Load Layout from Embedded Resource
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var resourceName = "ChroMapper_UIPluginDesigner.editor_layout.json";
-
-            string json = null;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            {
-                if (stream != null)
+                // Inspector Inputs
+                private UITextInput _inputName;
+                private UITextInput _inputText;
+                private UITextInput _inputX, _inputY, _inputW, _inputH;
+                private UITextInput _inputFontSize;
+                private UITextInput _inputMenuW, _inputMenuH, _inputMenuX, _inputMenuY;
+                private UITextInput _inputAnchorX, _inputAnchorY;
+        
+                        // Layout Inspector Inputs
+                        private UITextInput _inputPadL, _inputPadR, _inputPadT, _inputPadB;
+                        private UITextInput _inputSpacing;
+                        private UIDropdown _inputChildAlignment;
+                        private Toggle _tglChCW, _tglChCH, _tglChFW, _tglChFH;
+                        private List<GameObject> _layoutInspectorObjects = new List<GameObject>();
+                        private List<GameObject> _normalInspectorObjects = new List<GameObject>();        
+                private TextMeshProUGUI _pathLabel;
+                private UIDropdown _hierarchyDropdown;
+                private List<ElementData> _flatHierarchyList = new List<ElementData>();
+                private bool _ignoreDropdownChange = false;
+        
+                public void Start()
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    if (Ui == null) Debug.LogError("DesignerController: Plugin.ui is null in Start!");
+                    
+                    _fileManager = new LayoutFileManager();
+                    _previewManager = new PreviewManager(Ui, GetCanvas());
+        
+                    CreateEditorPanel();
+                    _previewManager.CreateContainer((pos) => {
+                        if (_inputMenuX != null && _inputMenuX.InputField != null) _inputMenuX.InputField.SetTextWithoutNotify(pos.x.ToString("F0"));
+                        if (_inputMenuY != null && _inputMenuY.InputField != null) _inputMenuY.InputField.SetTextWithoutNotify(pos.y.ToString("F0"));
+                    });
+                }
+                
+                // ... (OnDestroy, GetCanvas, CreateEditorPanel are same) ...
+        
+                private void BindEditorEvents(UILayoutBuilder builder)
+                {
+                    // Palette
+                    if (builder.GetObject(UIConstants.NameAddButton) != null) builder.Get<Button>(UIConstants.NameAddButton).onClick.AddListener(() => AddElement(ElementType.Button));
+                    if (builder.GetObject(UIConstants.NameAddLabel) != null) builder.Get<Button>(UIConstants.NameAddLabel).onClick.AddListener(() => AddElement(ElementType.Label));
+                    if (builder.GetObject(UIConstants.NameAddInput) != null) builder.Get<Button>(UIConstants.NameAddInput).onClick.AddListener(() => AddElement(ElementType.TextInput));
+                    if (builder.GetObject(UIConstants.NameAddDropdown) != null) builder.Get<Button>(UIConstants.NameAddDropdown).onClick.AddListener(() => AddElement(ElementType.Dropdown));
+                    if (builder.GetObject(UIConstants.NameAddCheckbox) != null) builder.Get<Button>(UIConstants.NameAddCheckbox).onClick.AddListener(() => AddElement(ElementType.Checkbox));
+                    if (builder.GetObject(UIConstants.NameAddVerticalLayout) != null) builder.Get<Button>(UIConstants.NameAddVerticalLayout).onClick.AddListener(() => AddElement(ElementType.VerticalLayout));
+                    if (builder.GetObject(UIConstants.NameAddHorizontalLayout) != null) builder.Get<Button>(UIConstants.NameAddHorizontalLayout).onClick.AddListener(() => AddElement(ElementType.HorizontalLayout));
+        
+                    // Actions
+                    if (builder.GetObject(UIConstants.NameSave) != null) builder.Get<Button>(UIConstants.NameSave).onClick.AddListener(SaveLayout);
+                    if (builder.GetObject(UIConstants.NameLoad) != null) builder.Get<Button>(UIConstants.NameLoad).onClick.AddListener(LoadLayout);
+                    if (builder.GetObject(UIConstants.NameExport) != null) builder.Get<Button>(UIConstants.NameExport).onClick.AddListener(ExportCode);
+                    if (builder.GetObject(UIConstants.NameClose) != null) builder.Get<Button>(UIConstants.NameClose).onClick.AddListener(() => Destroy(gameObject));
+        
+                    // Hierarchy & Path
+                    if (builder.GetObject(UIConstants.NamePathLabel) != null)
                     {
-                        json = reader.ReadToEnd();
+                        var lblObj = builder.GetObject(UIConstants.NamePathLabel);
+                        _pathLabel = lblObj.GetComponent<TextMeshProUGUI>();
                     }
+        
+                    if (builder.GetObject(UIConstants.NameHierarchyDropdown) != null)
+                    {
+                        _hierarchyDropdown = builder.Get<UIDropdown>(UIConstants.NameHierarchyDropdown);
+                        _hierarchyDropdown.Dropdown.onValueChanged.AddListener((index) => {
+                            if (_ignoreDropdownChange) return;
+                            if (index >= 0 && index < _flatHierarchyList.Count)
+                            {
+                                SelectElement(_flatHierarchyList[index]);
+                            }
+                        });
+                    }
+        
+                    // Menu Size & Pos Inputs (Same as before)
+                    _inputMenuW = BindMenuInput(builder, UIConstants.NameMenuW, UpdateMenuSize);
+                    _inputMenuH = BindMenuInput(builder, UIConstants.NameMenuH, UpdateMenuSize);
+                    _inputMenuX = BindMenuInput(builder, UIConstants.NameMenuX, UpdateMenuPos);
+                    _inputMenuY = BindMenuInput(builder, UIConstants.NameMenuY, UpdateMenuPos);
+                    _inputAnchorX = BindMenuInput(builder, UIConstants.NameMenuAnchorX, UpdateMenuAnchor);
+                    _inputAnchorY = BindMenuInput(builder, UIConstants.NameMenuAnchorY, UpdateMenuAnchor);
+        
+                    // Inspector Actions
+                    if (builder.GetObject(UIConstants.NameDeleteElement) != null) builder.Get<Button>(UIConstants.NameDeleteElement).onClick.AddListener(DeleteSelectedElement);
+                    if (builder.GetObject(UIConstants.NameCopyElement) != null) builder.Get<Button>(UIConstants.NameCopyElement).onClick.AddListener(CopySelectedElement);
+        
+                    // Normal Inspector Inputs
+                    _inputName = BindInspectorInput(builder, UIConstants.PrefixName, false);
+                    _inputText = BindInspectorInput(builder, UIConstants.PrefixText, false, true); // true = normal prop
+                    _inputX = BindInspectorInput(builder, UIConstants.PrefixPosX, true);
+                    _inputY = BindInspectorInput(builder, UIConstants.PrefixPosY, true);
+                    _inputW = BindInspectorInput(builder, UIConstants.PrefixSizeW, true);
+                    _inputH = BindInspectorInput(builder, UIConstants.PrefixSizeH, true);
+                    _inputFontSize = BindInspectorInput(builder, UIConstants.PrefixFontSize, true, true); // true = normal prop
+        
+                    RegisterNormalObject(builder, "Text_L");
+                    RegisterNormalObject(builder, "FontSize_L");
+        
+                    // Layout Inspector Inputs
+                    _inputPadL = BindInspectorInput(builder, UIConstants.NamePaddingL, true, false, true);
+                    _inputPadR = BindInspectorInput(builder, UIConstants.NamePaddingR, true, false, true);
+                    _inputPadT = BindInspectorInput(builder, UIConstants.NamePaddingT, true, false, true);
+                    _inputPadB = BindInspectorInput(builder, UIConstants.NamePaddingB, true, false, true);
+                                _inputSpacing = BindInspectorInput(builder, UIConstants.NameSpacing, true, false, true);
+                    
+                                _inputChildAlignment = builder.Get<UIDropdown>(UIConstants.NameChildAlignment);
+                                if (_inputChildAlignment != null)
+                                {
+                                    var options = new List<string>(Enum.GetNames(typeof(TextAnchor)));
+                                    _inputChildAlignment.SetOptions(options);
+                                    _inputChildAlignment.Dropdown.onValueChanged.AddListener((v) => UpdateSelectedElement());
+                                    _layoutInspectorObjects.Add(_inputChildAlignment.gameObject);
+                                }
+                    
+                                _tglChCW = BindInspectorToggle(builder, UIConstants.NameChC_W);
+                                _tglChCH = BindInspectorToggle(builder, UIConstants.NameChC_H);
+                                _tglChFW = BindInspectorToggle(builder, UIConstants.NameChF_W);
+                                _tglChFH = BindInspectorToggle(builder, UIConstants.NameChF_H);
+                                
+                                // Register layout specific objects for visibility toggling
+                                RegisterLayoutObject(builder, UIConstants.NameLayoutTitle);
+                                RegisterLayoutObject(builder, "LabelPadL");
+                                RegisterLayoutObject(builder, "LabelPadR");
+                                RegisterLayoutObject(builder, "LabelPadT");
+                                RegisterLayoutObject(builder, "LabelPadB");
+                                RegisterLayoutObject(builder, "LabelSpacing");
+                                RegisterLayoutObject(builder, "LabelAlignment");
+                                RegisterLayoutObject(builder, "ChildAlignment");
+                                RegisterLayoutObject(builder, "LabelChControl");                    RegisterLayoutObject(builder, "LblChCW");
+                    RegisterLayoutObject(builder, "LblChCH");
+                    RegisterLayoutObject(builder, "LabelForceExp");
+                    RegisterLayoutObject(builder, "LblFExpW");
+                    RegisterLayoutObject(builder, "LblFExpH");
                 }
-            }
-
-            if (!string.IsNullOrEmpty(json))
-            {
-                var root = JSON.Parse(json);
-
-                _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
-                _editorPanel.transform.SetParent(canvas.transform, false);
-
-                // Apply Panel Settings from JSON
-                float pW = root[UIConstants.KeyPanelWidth] != null ? root[UIConstants.KeyPanelWidth].AsFloat : 140;
-                float pH = root[UIConstants.KeyPanelHeight] != null ? root[UIConstants.KeyPanelHeight].AsFloat : 300;
-                float pAX = root[UIConstants.KeyPanelAnchorX] != null ? root[UIConstants.KeyPanelAnchorX].AsFloat : 0;
-                float pAY = root[UIConstants.KeyPanelAnchorY] != null ? root[UIConstants.KeyPanelAnchorY].AsFloat : 0.5f;
-                float pX = root[UIConstants.KeyPanelPosX] != null ? root[UIConstants.KeyPanelPosX].AsFloat : 70;
-                float pY = root[UIConstants.KeyPanelPosY] != null ? root[UIConstants.KeyPanelPosY].AsFloat : 0;
-                
-                Ui.AttachImage(_editorPanel, new Color(0.1f, 0.1f, 0.1f, 0.95f));
-                Ui.MoveTransform(_editorPanel.transform, pW, pH, pAX, pAY, pX, pY);
-
-                var drag = _editorPanel.AddComponent<SimpleDrag>();
-                drag.Target = _editorPanel.transform as RectTransform;
-                drag.Canvas = canvas;
-                
-                var builder = new UILayoutBuilder(Ui, _editorPanel.transform);
-                var objects = builder.Build(root);
-                
-                BindEditorEvents(builder);
-            }
-            else
-            {
-                Debug.LogError("Editor Layout Resource not found: " + resourceName);
-                
-                _editorPanel = new GameObject("EditorPanel", typeof(RectTransform));
-                _editorPanel.transform.SetParent(canvas.transform, false);
-                Ui.MoveTransform(_editorPanel.transform, 140, 300, 0, 0.5f, 70, 0); // Fallback
-                
-                Ui.AddLabel(_editorPanel.transform, "Error", "Layout Resource not found", 140, 50, 0.5f, 0.5f, 0, 0, TextAlignmentOptions.Center, 12);
-            }
-        }
-
-        private void BindEditorEvents(UILayoutBuilder builder)
-        {
-            // Palette
-            if (builder.GetObject(UIConstants.NameAddButton) != null) builder.Get<Button>(UIConstants.NameAddButton).onClick.AddListener(() => AddElement(ElementType.Button));
-            if (builder.GetObject(UIConstants.NameAddLabel) != null) builder.Get<Button>(UIConstants.NameAddLabel).onClick.AddListener(() => AddElement(ElementType.Label));
-            if (builder.GetObject(UIConstants.NameAddInput) != null) builder.Get<Button>(UIConstants.NameAddInput).onClick.AddListener(() => AddElement(ElementType.TextInput));
-            if (builder.GetObject(UIConstants.NameAddDropdown) != null) builder.Get<Button>(UIConstants.NameAddDropdown).onClick.AddListener(() => AddElement(ElementType.Dropdown));
-            if (builder.GetObject(UIConstants.NameAddCheckbox) != null) builder.Get<Button>(UIConstants.NameAddCheckbox).onClick.AddListener(() => AddElement(ElementType.Checkbox));
-
-            // Actions
-            if (builder.GetObject(UIConstants.NameSave) != null) builder.Get<Button>(UIConstants.NameSave).onClick.AddListener(SaveLayout);
-            if (builder.GetObject(UIConstants.NameLoad) != null) builder.Get<Button>(UIConstants.NameLoad).onClick.AddListener(LoadLayout);
-            if (builder.GetObject(UIConstants.NameExport) != null) builder.Get<Button>(UIConstants.NameExport).onClick.AddListener(ExportCode);
-            if (builder.GetObject(UIConstants.NameClose) != null) builder.Get<Button>(UIConstants.NameClose).onClick.AddListener(() => Destroy(gameObject));
-
-            // Menu Size Inputs
-            _inputMenuW = builder.Get<UITextInput>(UIConstants.NameMenuW);
-            _inputMenuH = builder.Get<UITextInput>(UIConstants.NameMenuH);
-            
-            if (_inputMenuW != null) {
-                _inputMenuW.InputField.onEndEdit.AddListener((v) => UpdateMenuSize());
-                _inputMenuW.InputField.onValueChanged.AddListener((v) => UpdateMenuSize());
-                var adj = _inputMenuW.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputMenuW.InputField;
-            }
-            if (_inputMenuH != null) {
-                _inputMenuH.InputField.onEndEdit.AddListener((v) => UpdateMenuSize());
-                _inputMenuH.InputField.onValueChanged.AddListener((v) => UpdateMenuSize());
-                var adj = _inputMenuH.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputMenuH.InputField;
-            }
-
-            // Menu Pos Inputs
-            _inputMenuX = builder.Get<UITextInput>(UIConstants.NameMenuX);
-            _inputMenuY = builder.Get<UITextInput>(UIConstants.NameMenuY);
-
-            if (_inputMenuX != null) {
-                _inputMenuX.InputField.onEndEdit.AddListener((v) => UpdateMenuPos());
-                _inputMenuX.InputField.onValueChanged.AddListener((v) => UpdateMenuPos());
-                var adj = _inputMenuX.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputMenuX.InputField;
-            }
-            if (_inputMenuY != null) {
-                _inputMenuY.InputField.onEndEdit.AddListener((v) => UpdateMenuPos());
-                _inputMenuY.InputField.onValueChanged.AddListener((v) => UpdateMenuPos());
-                var adj = _inputMenuY.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputMenuY.InputField;
-            }
-
-            // Menu Anchor Inputs
-            _inputAnchorX = builder.Get<UITextInput>(UIConstants.NameMenuAnchorX);
-            _inputAnchorY = builder.Get<UITextInput>(UIConstants.NameMenuAnchorY);
-
-            if (_inputAnchorX != null) {
-                _inputAnchorX.InputField.onEndEdit.AddListener((v) => UpdateMenuAnchor());
-                _inputAnchorX.InputField.onValueChanged.AddListener((v) => UpdateMenuAnchor());
-                var adj = _inputAnchorX.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputAnchorX.InputField;
-            }
-            if (_inputAnchorY != null) {
-                _inputAnchorY.InputField.onEndEdit.AddListener((v) => UpdateMenuAnchor());
-                _inputAnchorY.InputField.onValueChanged.AddListener((v) => UpdateMenuAnchor());
-                var adj = _inputAnchorY.gameObject.AddComponent<InputNumberAdjuster>();
-                adj.InputField = _inputAnchorY.InputField;
-            }
-
-            // Inspector Actions
-            if (builder.GetObject(UIConstants.NameDeleteElement) != null) builder.Get<Button>(UIConstants.NameDeleteElement).onClick.AddListener(DeleteSelectedElement);
-            if (builder.GetObject(UIConstants.NameCopyElement) != null) builder.Get<Button>(UIConstants.NameCopyElement).onClick.AddListener(CopySelectedElement);
-
-            // Inspector Inputs
-            _inputName = BindInspectorInput(builder, UIConstants.PrefixName, false);
-            _inputText = BindInspectorInput(builder, UIConstants.PrefixText, false);
-            _inputX = BindInspectorInput(builder, UIConstants.PrefixPosX, true);
-            _inputY = BindInspectorInput(builder, UIConstants.PrefixPosY, true);
-            _inputW = BindInspectorInput(builder, UIConstants.PrefixSizeW, true);
-            _inputH = BindInspectorInput(builder, UIConstants.PrefixSizeH, true);
-            _inputFontSize = BindInspectorInput(builder, UIConstants.PrefixFontSize, true);
-        }
-
-        private UITextInput BindInspectorInput(UILayoutBuilder builder, string prefix, bool numeric)
-        {
-            var input = builder.Get<UITextInput>(prefix + UIConstants.SuffixInput);
-            if (input != null)
-            {
-                // Use onValueChanged for real-time updates
-                input.InputField.onValueChanged.AddListener((val) => UpdateSelectedElement());
-                input.InputField.onEndEdit.AddListener((val) => UpdateSelectedElement());
-                
-                if (numeric)
+        
+                private UITextInput BindMenuInput(UILayoutBuilder builder, string name, UnityEngine.Events.UnityAction action)
                 {
-                    var adj = input.gameObject.AddComponent<InputNumberAdjuster>();
-                    adj.InputField = input.InputField;
+                    var input = builder.Get<UITextInput>(name);
+                    if (input != null) {
+                        input.InputField.onEndEdit.AddListener((v) => action());
+                        input.InputField.onValueChanged.AddListener((v) => action());
+                        var adj = input.gameObject.AddComponent<InputNumberAdjuster>();
+                        adj.InputField = input.InputField;
+                    }
+                    return input;
                 }
-            }
-            return input;
-        }
-
+        
+                private UITextInput BindInspectorInput(UILayoutBuilder builder, string name, bool numeric, bool isNormalProp = false, bool isLayoutProp = false)
+                {
+                    // For Prefix names, append SuffixInput. For exact names, use as is.
+                    string key = name.EndsWith("_I") ? name : name + UIConstants.SuffixInput;
+                    if (name == UIConstants.NameSpacing || name == UIConstants.NamePaddingL || name == UIConstants.NamePaddingR || name == UIConstants.NamePaddingT || name == UIConstants.NamePaddingB) key = name;
+        
+                    var input = builder.Get<UITextInput>(key);
+                    if (input != null)
+                    {
+                        input.InputField.onValueChanged.AddListener((val) => UpdateSelectedElement());
+                        input.InputField.onEndEdit.AddListener((val) => UpdateSelectedElement());
+                        
+                        if (numeric)
+                        {
+                            var adj = input.gameObject.AddComponent<InputNumberAdjuster>();
+                            adj.InputField = input.InputField;
+                        }
+        
+                        if (isNormalProp) _normalInspectorObjects.Add(input.gameObject);
+                        if (isLayoutProp) _layoutInspectorObjects.Add(input.gameObject);
+                    }
+                    return input;
+                }
+        
+                private Toggle BindInspectorToggle(UILayoutBuilder builder, string name)
+                {
+                    var tgl = builder.Get<Toggle>(name);
+                    if (tgl != null)
+                    {
+                        tgl.onValueChanged.AddListener((val) => UpdateSelectedElement());
+                        _layoutInspectorObjects.Add(tgl.gameObject);
+                    }
+                    return tgl;
+                }
+        
+                private void RegisterNormalObject(UILayoutBuilder builder, string name)
+                {
+                    var obj = builder.GetObject(name);
+                    if (obj != null) _normalInspectorObjects.Add(obj);
+                }
+        
+                private void RegisterLayoutObject(UILayoutBuilder builder, string name)
+                {
+                    var obj = builder.GetObject(name);
+                    if (obj != null) _layoutInspectorObjects.Add(obj);
+                }
+        
         private void UpdateMenuSize()
         {
             if (_inputMenuW != null && _inputMenuW.InputField != null && 
@@ -259,13 +254,84 @@ namespace ChroMapper_UIPluginDesigner
 
 
 
+        private void UpdatePathDisplay(ElementData target)
+        {
+            if (_pathLabel == null) return;
+            if (target == null)
+            {
+                _pathLabel.text = "Root";
+                return;
+            }
+
+            var path = new List<string>();
+            var current = target;
+            path.Add(current.Name);
+
+            // Find parents recursively from root
+            while (true)
+            {
+                var parent = FindParent(_elements, current);
+                if (parent != null)
+                {
+                    path.Add(parent.Name);
+                    current = parent;
+                }
+                else
+                {
+                    path.Add("Root");
+                    break;
+                }
+            }
+
+            path.Reverse();
+            _pathLabel.text = string.Join(" > ", path);
+        }
+
+        private void UpdateHierarchyDropdown()
+        {
+            if (_hierarchyDropdown == null) return;
+
+            _flatHierarchyList.Clear();
+            var options = new List<string>();
+
+            // Recursive function to flatten hierarchy
+            void ProcessList(List<ElementData> list, int depth)
+            {
+                foreach (var el in list)
+                {
+                    _flatHierarchyList.Add(el);
+                    options.Add(new string(' ', depth * 2) + el.Name); // Indent
+                    if (el.Children.Count > 0)
+                    {
+                        ProcessList(el.Children, depth + 1);
+                    }
+                }
+            }
+
+            ProcessList(_elements, 0);
+
+            _ignoreDropdownChange = true;
+            _hierarchyDropdown.SetOptions(options);
+            _ignoreDropdownChange = false;
+
+            // Sync selection if possible
+            if (_selectedElement != null)
+            {
+                int index = _flatHierarchyList.IndexOf(_selectedElement);
+                if (index != -1)
+                {
+                    _hierarchyDropdown.Dropdown.SetValueWithoutNotify(index);
+                }
+            }
+        }
+
         private void CopySelectedElement()
         {
             if (_selectedElement == null) return;
             var newEl = new ElementData
             {
                 Type = _selectedElement.Type,
-                Name = _selectedElement.Type.ToString() + _elements.Count,
+                Name = _selectedElement.Type.ToString() + UnityEngine.Random.Range(0, 1000),
                 Text = _selectedElement.Text,
                 AnchorPosX = _selectedElement.AnchorPosX + 10,
                 AnchorPosY = _selectedElement.AnchorPosY - 10,
@@ -281,7 +347,22 @@ namespace ChroMapper_UIPluginDesigner
         private void DeleteSelectedElement()
         {
             if (_selectedElement == null) return;
-            _elements.Remove(_selectedElement);
+            
+            // Try remove from root
+            if (_elements.Contains(_selectedElement))
+            {
+                _elements.Remove(_selectedElement);
+            }
+            else
+            {
+                // Try remove from children
+                var parent = FindParent(_elements, _selectedElement);
+                if (parent != null)
+                {
+                    parent.Children.Remove(_selectedElement);
+                }
+            }
+
             _selectedElement = null;
             
             _inputName.InputField.text = "";
@@ -295,6 +376,68 @@ namespace ChroMapper_UIPluginDesigner
             RefreshPreview();
         }
 
+        private ElementData FindParent(List<ElementData> nodes, ElementData target)
+        {
+            foreach (var node in nodes)
+            {
+                if (node.Children.Contains(target)) return node;
+                var res = FindParent(node.Children, target);
+                if (res != null) return res;
+            }
+            return null;
+        }
+
+        private void ReparentElement(ElementData child, ElementData newParent)
+        {
+            if (child == newParent) return; // Cannot parent to self
+            
+            // Check for circular dependency
+            if (IsDescendant(child, newParent)) return;
+
+            // Remove from old parent
+            if (_elements.Contains(child))
+            {
+                _elements.Remove(child);
+            }
+            else
+            {
+                var oldParent = FindParent(_elements, child);
+                if (oldParent != null)
+                {
+                    oldParent.Children.Remove(child);
+                }
+            }
+
+            // Add to new parent
+            if (newParent == null)
+            {
+                _elements.Add(child);
+            }
+            else
+            {
+                newParent.Children.Add(child);
+            }
+
+            RefreshPreview();
+            
+            // Re-select to update inspector input states (enabled/disabled) based on new parent
+            if (_selectedElement == child)
+            {
+                SelectElement(child);
+            }
+        }
+
+        private bool IsDescendant(ElementData node, ElementData potentialDescendant)
+        {
+            if (potentialDescendant == null) return false;
+            foreach (var child in node.Children)
+            {
+                if (child == potentialDescendant) return true;
+                if (IsDescendant(child, potentialDescendant)) return true;
+            }
+            return false;
+        }
+
         private void AddElement(ElementType type)
         {
             if (_elements == null) _elements = new List<ElementData>();
@@ -302,7 +445,7 @@ namespace ChroMapper_UIPluginDesigner
             var data = new ElementData
             {
                 Type = type,
-                Name = type.ToString() + _elements.Count,
+                Name = type.ToString() + UnityEngine.Random.Range(0, 1000), // Unique name
                 Text = type.ToString(),
                 SizeX = 160,
                 SizeY = 40,
@@ -313,6 +456,12 @@ namespace ChroMapper_UIPluginDesigner
 
             if (type == ElementType.Label) { data.SizeX = 200; data.SizeY = 30; }
             if (type == ElementType.Button) { data.SizeX = 100; data.SizeY = 30; }
+            if (type == ElementType.VerticalLayout || type == ElementType.HorizontalLayout)
+            {
+                data.SizeX = 200;
+                data.SizeY = 200;
+                data.Text = "";
+            }
 
             _elements.Add(data);
             SelectElement(data);
@@ -323,34 +472,125 @@ namespace ChroMapper_UIPluginDesigner
         {
             _selectedElement = data;
 
+            // Common Props
             if (_inputName != null && _inputName.InputField != null) _inputName.InputField.SetTextWithoutNotify(data.Name);
-            if (_inputText != null && _inputText.InputField != null) _inputText.InputField.SetTextWithoutNotify(data.Text);
             if (_inputX != null && _inputX.InputField != null) _inputX.InputField.SetTextWithoutNotify(data.AnchorPosX.ToString());
             if (_inputY != null && _inputY.InputField != null) _inputY.InputField.SetTextWithoutNotify(data.AnchorPosY.ToString());
             if (_inputW != null && _inputW.InputField != null) _inputW.InputField.SetTextWithoutNotify(data.SizeX.ToString());
             if (_inputH != null && _inputH.InputField != null) _inputH.InputField.SetTextWithoutNotify(data.SizeY.ToString());
-            if (_inputFontSize != null && _inputFontSize.InputField != null) _inputFontSize.InputField.SetTextWithoutNotify(data.FontSize.ToString());
+
+            // Check if parent is a Layout Group
+            var parent = FindParent(_elements, data);
+            bool isChildOfLayout = parent != null && (parent.Type == ElementType.VerticalLayout || parent.Type == ElementType.HorizontalLayout);
+            
+            if (_inputX != null && _inputX.InputField != null) _inputX.InputField.interactable = !isChildOfLayout;
+            if (_inputY != null && _inputY.InputField != null) _inputY.InputField.interactable = !isChildOfLayout;
+
+            if (_inputW != null && _inputW.InputField != null) 
+                _inputW.InputField.interactable = !(isChildOfLayout && parent.ChildControlWidth);
+            if (_inputH != null && _inputH.InputField != null) 
+                _inputH.InputField.interactable = !(isChildOfLayout && parent.ChildControlHeight);
+
+            bool isLayout = (data.Type == ElementType.VerticalLayout || data.Type == ElementType.HorizontalLayout);
+            
+            ToggleLayoutInspector(isLayout);
+
+            if (isLayout)
+            {
+                // Layout Props
+                if (_inputPadL != null) _inputPadL.InputField.SetTextWithoutNotify(data.PaddingLeft.ToString());
+                if (_inputPadR != null) _inputPadR.InputField.SetTextWithoutNotify(data.PaddingRight.ToString());
+                if (_inputPadT != null) _inputPadT.InputField.SetTextWithoutNotify(data.PaddingTop.ToString());
+                if (_inputPadB != null) _inputPadB.InputField.SetTextWithoutNotify(data.PaddingBottom.ToString());
+                if (_inputSpacing != null) _inputSpacing.InputField.SetTextWithoutNotify(data.Spacing.ToString());
+                
+                if (_inputChildAlignment != null) _inputChildAlignment.Dropdown.SetValueWithoutNotify((int)data.Alignment);
+
+                if (_tglChCW != null) _tglChCW.SetIsOnWithoutNotify(data.ChildControlWidth);
+                if (_tglChCH != null) _tglChCH.SetIsOnWithoutNotify(data.ChildControlHeight);
+                if (_tglChFW != null) _tglChFW.SetIsOnWithoutNotify(data.ChildForceExpandWidth);
+                if (_tglChFH != null) _tglChFH.SetIsOnWithoutNotify(data.ChildForceExpandHeight);
+            }
+            else
+            {
+                // Normal Props
+                if (_inputText != null && _inputText.InputField != null) _inputText.InputField.SetTextWithoutNotify(data.Text);
+                if (_inputFontSize != null && _inputFontSize.InputField != null) _inputFontSize.InputField.SetTextWithoutNotify(data.FontSize.ToString());
+            }
+
+            UpdatePathDisplay(data);
+            
+            // Sync dropdown
+            if (_hierarchyDropdown != null && !_ignoreDropdownChange)
+            {
+                _ignoreDropdownChange = true;
+                int index = _flatHierarchyList.IndexOf(data);
+                if (index != -1)
+                {
+                    _hierarchyDropdown.Dropdown.SetValueWithoutNotify(index);
+                }
+                _ignoreDropdownChange = false;
+            }
+        }
+
+        private void ToggleLayoutInspector(bool showLayout)
+        {
+            foreach (var obj in _layoutInspectorObjects)
+            {
+                obj.SetActive(showLayout);
+            }
+            foreach (var obj in _normalInspectorObjects)
+            {
+                obj.SetActive(!showLayout);
+            }
         }
 
         private void UpdateSelectedElement()
         {
             if (_selectedElement == null) return;
 
+            // Common Props
             if (_inputName != null && _inputName.InputField != null) _selectedElement.Name = _inputName.InputField.text;
-            if (_inputText != null && _inputText.InputField != null) _selectedElement.Text = _inputText.InputField.text;
-
+            
             if (_inputX != null && float.TryParse(_inputX.InputField.text, out float x)) _selectedElement.AnchorPosX = x;
             if (_inputY != null && float.TryParse(_inputY.InputField.text, out float y)) _selectedElement.AnchorPosY = y;
             if (_inputW != null && float.TryParse(_inputW.InputField.text, out float w)) _selectedElement.SizeX = w;
             if (_inputH != null && float.TryParse(_inputH.InputField.text, out float h)) _selectedElement.SizeY = h;
-            if (_inputFontSize != null && float.TryParse(_inputFontSize.InputField.text, out float f)) _selectedElement.FontSize = f;
+
+            bool isLayout = (_selectedElement.Type == ElementType.VerticalLayout || _selectedElement.Type == ElementType.HorizontalLayout);
+
+            if (isLayout)
+            {
+                if (_inputPadL != null && int.TryParse(_inputPadL.InputField.text, out int pl)) _selectedElement.PaddingLeft = pl;
+                if (_inputPadR != null && int.TryParse(_inputPadR.InputField.text, out int pr)) _selectedElement.PaddingRight = pr;
+                if (_inputPadT != null && int.TryParse(_inputPadT.InputField.text, out int pt)) _selectedElement.PaddingTop = pt;
+                if (_inputPadB != null && int.TryParse(_inputPadB.InputField.text, out int pb)) _selectedElement.PaddingBottom = pb;
+                if (_inputSpacing != null && float.TryParse(_inputSpacing.InputField.text, out float sp)) _selectedElement.Spacing = sp;
+
+                if (_inputChildAlignment != null) _selectedElement.Alignment = (TextAnchor)_inputChildAlignment.Dropdown.value;
+
+                if (_tglChCW != null) _selectedElement.ChildControlWidth = _tglChCW.isOn;
+                if (_tglChCH != null) _selectedElement.ChildControlHeight = _tglChCH.isOn;
+                if (_tglChFW != null) _selectedElement.ChildForceExpandWidth = _tglChFW.isOn;
+                if (_tglChFH != null) _selectedElement.ChildForceExpandHeight = _tglChFH.isOn;
+            }
+            else
+            {
+                if (_inputText != null && _inputText.InputField != null) _selectedElement.Text = _inputText.InputField.text;
+                if (_inputFontSize != null && float.TryParse(_inputFontSize.InputField.text, out float f)) _selectedElement.FontSize = f;
+            }
 
             RefreshPreview();
+            
+            // Name change updates hierarchy and path
+            UpdateHierarchyDropdown();
+            UpdatePathDisplay(_selectedElement);
         }
 
         private void RefreshPreview()
         {
-            _previewManager.Refresh(_elements, _selectedElement, SelectElement, SelectElement);
+            UpdateHierarchyDropdown();
+            _previewManager.Refresh(_elements, _selectedElement, SelectElement, SelectElement, ReparentElement);
         }
 
         private void SaveLayout()

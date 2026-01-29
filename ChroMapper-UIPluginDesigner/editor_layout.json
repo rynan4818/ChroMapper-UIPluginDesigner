@@ -1,6 +1,6 @@
 {
     "PanelWidth" : 140,
-    "PanelHeight" : 230,
+    "PanelHeight" : 380,
     "PanelAnchorX" : 0,
     "PanelAnchorY" : 0.5,
     "PanelPosX" : 63,
@@ -11,7 +11,7 @@
             "Name" : "AddButton",
             "Text" : "+ Button",
             "AnchorPosX" : -44,
-            "AnchorPosY" : 85,
+            "AnchorPosY" : 160,
             "SizeX" : 33,
             "SizeY" : 14,
             "FontSize" : 8
@@ -21,7 +21,7 @@
             "Name" : "AddLabel",
             "Text" : "+ Label",
             "AnchorPosX" : -8,
-            "AnchorPosY" : 85,
+            "AnchorPosY" : 160,
             "SizeX" : 31,
             "SizeY" : 14,
             "FontSize" : 8
@@ -31,7 +31,7 @@
             "Name" : "AddInput",
             "Text" : "+ Input",
             "AnchorPosX" : 24,
-            "AnchorPosY" : 85,
+            "AnchorPosY" : 160,
             "SizeX" : 31,
             "SizeY" : 14,
             "FontSize" : 8
@@ -41,7 +41,7 @@
             "Name" : "AddDropdown",
             "Text" : "+ Dropdown",
             "AnchorPosX" : -40,
-            "AnchorPosY" : 70,
+            "AnchorPosY" : 145,
             "SizeX" : 42,
             "SizeY" : 14,
             "FontSize" : 8
@@ -51,9 +51,49 @@
             "Name" : "AddCheckbox",
             "Text" : "+ Checkbox",
             "AnchorPosX" : 3,
-            "AnchorPosY" : 70,
+            "AnchorPosY" : 145,
             "SizeX" : 40,
             "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "AddVerticalLayout",
+            "Text" : "+ VLayout",
+            "AnchorPosX" : -40,
+            "AnchorPosY" : 130,
+            "SizeX" : 42,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Button",
+            "Name" : "AddHorizontalLayout",
+            "Text" : "+ HLayout",
+            "AnchorPosX" : 3,
+            "AnchorPosY" : 130,
+            "SizeX" : 42,
+            "SizeY" : 14,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Dropdown",
+            "Name" : "HierarchyDropdown",
+            "Text" : "",
+            "AnchorPosX" : 0,
+            "AnchorPosY" : 110,
+            "SizeX" : 130,
+            "SizeY" : 18,
+            "FontSize" : 9
+        },
+        {
+            "Type" : "Label",
+            "Name" : "PathLabel",
+            "Text" : "Root > ...",
+            "AnchorPosX" : 0,
+            "AnchorPosY" : 93,
+            "SizeX" : 130,
+            "SizeY" : 12,
             "FontSize" : 8
         },
         {
@@ -61,7 +101,7 @@
             "Name" : "Save",
             "Text" : "Save",
             "AnchorPosX" : -50,
-            "AnchorPosY" : 54,
+            "AnchorPosY" : 75,
             "SizeX" : 23,
             "SizeY" : 12,
             "FontSize" : 7
@@ -71,7 +111,7 @@
             "Name" : "Load",
             "Text" : "Load",
             "AnchorPosX" : -26,
-            "AnchorPosY" : 54,
+            "AnchorPosY" : 75,
             "SizeX" : 22,
             "SizeY" : 12,
             "FontSize" : 7
@@ -81,7 +121,7 @@
             "Name" : "Export",
             "Text" : "Export Code",
             "AnchorPosX" : 8,
-            "AnchorPosY" : 54,
+            "AnchorPosY" : 75,
             "SizeX" : 41,
             "SizeY" : 12,
             "FontSize" : 7
@@ -91,7 +131,7 @@
             "Name" : "Close",
             "Text" : "Close",
             "AnchorPosX" : 51,
-            "AnchorPosY" : -105,
+            "AnchorPosY" : -180,
             "SizeX" : 28,
             "SizeY" : 12,
             "FontSize" : 7
@@ -101,7 +141,7 @@
             "Name" : "MenuSizeL",
             "Text" : "Menu Size",
             "AnchorPosX" : -38,
-            "AnchorPosY" : 42,
+            "AnchorPosY" : 60,
             "SizeX" : 100,
             "SizeY" : 14,
             "FontSize" : 8
@@ -111,7 +151,7 @@
             "Name" : "MenuW",
             "Text" : "250",
             "AnchorPosX" : -49,
-            "AnchorPosY" : 29,
+            "AnchorPosY" : 47,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 8
@@ -121,7 +161,7 @@
             "Name" : "MenuH",
             "Text" : "190",
             "AnchorPosX" : -25,
-            "AnchorPosY" : 29,
+            "AnchorPosY" : 47,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -131,7 +171,7 @@
             "Name" : "MenuPosL",
             "Text" : "Menu Pos",
             "AnchorPosX" : 18,
-            "AnchorPosY" : 41,
+            "AnchorPosY" : 59,
             "SizeX" : 100,
             "SizeY" : 14,
             "FontSize" : 9
@@ -141,7 +181,7 @@
             "Name" : "MenuX",
             "Text" : "70",
             "AnchorPosX" : 7,
-            "AnchorPosY" : 28,
+            "AnchorPosY" : 46,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -151,7 +191,7 @@
             "Name" : "MenuY",
             "Text" : "180",
             "AnchorPosX" : 31,
-            "AnchorPosY" : 28,
+            "AnchorPosY" : 46,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -161,7 +201,7 @@
             "Name" : "MenuAnchorL",
             "Text" : "Menu Anchor",
             "AnchorPosX" : -37,
-            "AnchorPosY" : 15,
+            "AnchorPosY" : 33,
             "SizeX" : 100,
             "SizeY" : 14,
             "FontSize" : 8
@@ -171,7 +211,7 @@
             "Name" : "MenuAnchorX",
             "Text" : "0.5",
             "AnchorPosX" : -48,
-            "AnchorPosY" : 2,
+            "AnchorPosY" : 20,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -181,7 +221,7 @@
             "Name" : "MenuAnchorY",
             "Text" : "0.5",
             "AnchorPosX" : -24,
-            "AnchorPosY" : 2,
+            "AnchorPosY" : 20,
             "SizeX" : 22,
             "SizeY" : 17,
             "FontSize" : 9
@@ -191,7 +231,7 @@
             "Name" : "InspTitle",
             "Text" : "Inspector",
             "AnchorPosX" : -4,
-            "AnchorPosY" : -11,
+            "AnchorPosY" : 5,
             "SizeX" : 80,
             "SizeY" : 14,
             "FontSize" : 7
@@ -201,7 +241,7 @@
             "Name" : "DeleteElement",
             "Text" : "DEL",
             "AnchorPosX" : 9,
-            "AnchorPosY" : 2,
+            "AnchorPosY" : 18,
             "SizeX" : 21,
             "SizeY" : 14,
             "FontSize" : 7
@@ -211,7 +251,7 @@
             "Name" : "CopyElement",
             "Text" : "COPY",
             "AnchorPosX" : 34,
-            "AnchorPosY" : 2,
+            "AnchorPosY" : 18,
             "SizeX" : 27,
             "SizeY" : 14,
             "FontSize" : 7
@@ -221,7 +261,7 @@
             "Name" : "Name_L",
             "Text" : "Name",
             "AnchorPosX" : -49,
-            "AnchorPosY" : -30,
+            "AnchorPosY" : -14,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 10
@@ -231,7 +271,7 @@
             "Name" : "Name_I",
             "Text" : "",
             "AnchorPosX" : -3,
-            "AnchorPosY" : -27,
+            "AnchorPosY" : -11,
             "SizeX" : 68,
             "SizeY" : 17,
             "FontSize" : 9
@@ -241,7 +281,7 @@
             "Name" : "Text_L",
             "Text" : "Text",
             "AnchorPosX" : -47,
-            "AnchorPosY" : -48,
+            "AnchorPosY" : -32,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 10
@@ -251,7 +291,7 @@
             "Name" : "Text_I",
             "Text" : "",
             "AnchorPosX" : -2,
-            "AnchorPosY" : -47,
+            "AnchorPosY" : -31,
             "SizeX" : 68,
             "SizeY" : 17,
             "FontSize" : 9
@@ -261,7 +301,7 @@
             "Name" : "PosX_L",
             "Text" : "Pos X",
             "AnchorPosX" : -51,
-            "AnchorPosY" : -67,
+            "AnchorPosY" : -51,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -271,7 +311,7 @@
             "Name" : "PosX_I",
             "Text" : "",
             "AnchorPosX" : -18,
-            "AnchorPosY" : -68,
+            "AnchorPosY" : -52,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -281,7 +321,7 @@
             "Name" : "PosY_L",
             "Text" : "Pos Y",
             "AnchorPosX" : 13,
-            "AnchorPosY" : -69,
+            "AnchorPosY" : -53,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -291,7 +331,7 @@
             "Name" : "PosY_I",
             "Text" : "",
             "AnchorPosX" : 40,
-            "AnchorPosY" : -67,
+            "AnchorPosY" : -51,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -301,7 +341,7 @@
             "Name" : "SizeW_L",
             "Text" : "Size W",
             "AnchorPosX" : -50,
-            "AnchorPosY" : -86,
+            "AnchorPosY" : -70,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -311,7 +351,7 @@
             "Name" : "SizeW_I",
             "Text" : "",
             "AnchorPosX" : -18,
-            "AnchorPosY" : -85,
+            "AnchorPosY" : -69,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -321,7 +361,7 @@
             "Name" : "SizeH_L",
             "Text" : "Size H",
             "AnchorPosX" : 13,
-            "AnchorPosY" : -84,
+            "AnchorPosY" : -68,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -331,7 +371,7 @@
             "Name" : "SizeH_I",
             "Text" : "",
             "AnchorPosX" : 40,
-            "AnchorPosY" : -84,
+            "AnchorPosY" : -68,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
@@ -341,7 +381,7 @@
             "Name" : "FontSize_L",
             "Text" : "Font Size",
             "AnchorPosX" : -49,
-            "AnchorPosY" : -104,
+            "AnchorPosY" : -88,
             "SizeX" : 40,
             "SizeY" : 12,
             "FontSize" : 8
@@ -351,10 +391,118 @@
             "Name" : "FontSize_I",
             "Text" : "",
             "AnchorPosX" : -18,
-            "AnchorPosY" : -102,
+            "AnchorPosY" : -86,
             "SizeX" : 35,
             "SizeY" : 17,
             "FontSize" : 9
+        },
+        
+        {
+            "Type" : "Label",
+            "Name" : "LayoutTitle",
+            "Text" : "Layout Group Settings",
+            "AnchorPosX" : 0,
+            "AnchorPosY" : -100,
+            "SizeX" : 120,
+            "SizeY" : 12,
+            "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelPadL", "Text" : "Pad L",
+            "AnchorPosX" : -50, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "PadL", "Text" : "0",
+            "AnchorPosX" : -20, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelPadR", "Text" : "Pad R",
+            "AnchorPosX" : 15, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "PadR", "Text" : "0",
+            "AnchorPosX" : 45, "AnchorPosY" : -112, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelPadT", "Text" : "Pad T",
+            "AnchorPosX" : -50, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "PadT", "Text" : "0",
+            "AnchorPosX" : -20, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelPadB", "Text" : "Pad B",
+            "AnchorPosX" : 15, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "PadB", "Text" : "0",
+            "AnchorPosX" : 45, "AnchorPosY" : -128, "SizeX" : 25, "SizeY" : 14, "FontSize" : 8
+        },
+        {
+            "Type" : "Label",
+            "Name" : "LabelSpacing", "Text" : "Spacing",
+            "AnchorPosX" : -35, "AnchorPosY" : -144, "SizeX" : 40, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "TextInput",
+            "Name" : "Spacing_I", "Text" : "0",
+            "AnchorPosX" : 20, "AnchorPosY" : -144, "SizeX" : 40, "SizeY" : 14, "FontSize" : 8
+        },
+        
+        {
+            "Type" : "Label",
+            "Name" : "LabelAlignment", "Text" : "Child Alignment",
+            "AnchorPosX" : -20, "AnchorPosY" : -158, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Dropdown",
+            "Name" : "ChildAlignment", "Text" : "",
+            "AnchorPosX" : 35, "AnchorPosY" : -158, "SizeX" : 60, "SizeY" : 18, "FontSize" : 8
+        },
+
+        {
+            "Type" : "Label",
+            "Name" : "LabelChControl", "Text" : "Control Child Size",
+            "AnchorPosX" : -20, "AnchorPosY" : -172, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Label", "Name" : "LblChCW", "Text" : "W", "AnchorPosX" : 25, "AnchorPosY" : -172, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox", "Name" : "ChC_W", "AnchorPosX" : 35, "AnchorPosY" : -172, "SizeX" : 12, "SizeY" : 12
+        },
+        {
+            "Type" : "Label", "Name" : "LblChCH", "Text" : "H", "AnchorPosX" : 45, "AnchorPosY" : -172, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox", "Name" : "ChC_H", "AnchorPosX" : 55, "AnchorPosY" : -172, "SizeX" : 12, "SizeY" : 12
+        },
+
+        {
+            "Type" : "Label",
+            "Name" : "LabelForceExp", "Text" : "Force Expand",
+            "AnchorPosX" : -20, "AnchorPosY" : -186, "SizeX" : 80, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Label", "Name" : "LblFExpW", "Text" : "W", "AnchorPosX" : 25, "AnchorPosY" : -186, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox", "Name" : "ChF_W", "AnchorPosX" : 35, "AnchorPosY" : -186, "SizeX" : 12, "SizeY" : 12
+        },
+        {
+            "Type" : "Label", "Name" : "LblFExpH", "Text" : "H", "AnchorPosX" : 45, "AnchorPosY" : -186, "SizeX" : 10, "SizeY" : 10, "FontSize" : 7
+        },
+        {
+            "Type" : "Checkbox", "Name" : "ChF_H", "AnchorPosX" : 55, "AnchorPosY" : -186, "SizeX" : 12, "SizeY" : 12
         }
     ]
 }

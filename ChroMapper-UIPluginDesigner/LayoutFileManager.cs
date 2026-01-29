@@ -60,35 +60,64 @@ namespace ChroMapper_UIPluginDesigner
 
             foreach (var el in elements)
             {
-                string x = el.AnchorPosX.ToString("F1") + "f";
-                string y = el.AnchorPosY.ToString("F1") + "f";
-                string w = el.SizeX.ToString("F0");
-                string h = el.SizeY.ToString("F0");
-                string f = el.FontSize.ToString("F0");
-
-                switch (el.Type)
-                {
-                    case ElementType.Button:
-                        sb.AppendLine($"    ui.AddButton(menu.transform, \"{el.Name}\", \"{el.Text}\", {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, () => {{}}); // Note: Click handler is a placeholder");
-                        break;
-                    case ElementType.Label:
-                        sb.AppendLine($"    ui.AddLabel(menu.transform, \"{el.Name}\", \"{el.Text}\", {w}, {h}, 0.5f, 0.5f, {x}, {y}, TextAlignmentOptions.Center, {f}");
-                        break;
-                    case ElementType.TextInput:
-                        sb.AppendLine($"    ui.AddTextInput(menu.transform, \"{el.Name}\", \"{el.Text}\", TextAlignmentOptions.Left, {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
-                        break;
-                    case ElementType.Dropdown:
-                        sb.AppendLine($"    ui.AddDropdown(menu.transform, new List<string>(), 0, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
-                        break;
-                    case ElementType.Checkbox:
-                        sb.AppendLine($"    ui.AddCheckbox(menu.transform, true, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnValueChanged handler is a placeholder");
-                        break;
-                }
+                ExportElement(sb, el, "menu.transform");
             }
             sb.AppendLine("}");
             
             File.WriteAllText(path, sb.ToString());
             PersistentUI.Instance.DisplayMessage("Code exported to file!", PersistentUI.DisplayMessageType.Bottom);
+        }
+
+        private void ExportElement(StringBuilder sb, ElementData el, string parentVar)
+        {
+            string x = el.AnchorPosX.ToString("F1") + "f";
+            string y = el.AnchorPosY.ToString("F1") + "f";
+            string w = el.SizeX.ToString("F0");
+            string h = el.SizeY.ToString("F0");
+            string f = el.FontSize.ToString("F0");
+
+            switch (el.Type)
+            {
+                case ElementType.Button:
+                    sb.AppendLine($"    ui.AddButton({parentVar}, \"{el.Name}\", \"{el.Text}\", {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, () => {{}}); // Note: Click handler is a placeholder");
+                    break;
+                case ElementType.Label:
+                    sb.AppendLine($"    ui.AddLabel({parentVar}, \"{el.Name}\", \"{el.Text}\", {w}, {h}, 0.5f, 0.5f, {x}, {y}, TextAlignmentOptions.Center, {f});");
+                    break;
+                case ElementType.TextInput:
+                    sb.AppendLine($"    ui.AddTextInput({parentVar}, \"{el.Name}\", \"{el.Text}\", TextAlignmentOptions.Left, {f}, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                    break;
+                case ElementType.Dropdown:
+                    sb.AppendLine($"    ui.AddDropdown({parentVar}, new List<string>(), 0, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnChange handler is a placeholder");
+                    break;
+                case ElementType.Checkbox:
+                    sb.AppendLine($"    ui.AddCheckbox({parentVar}, true, {w}, {h}, 0.5f, 0.5f, {x}, {y}, (val) => {{}}); // Note: OnValueChanged handler is a placeholder");
+                    break;
+                case ElementType.VerticalLayout:
+                case ElementType.HorizontalLayout:
+                    string varName = "go_" + el.Name.Replace(" ", "_").Replace("-", "_");
+                    sb.AppendLine($"    // Layout Group: {el.Name}");
+                    sb.AppendLine($"    var {varName} = new GameObject(\"{el.Name}\");");
+                    sb.AppendLine($"    {varName}.transform.SetParent({parentVar}, false);");
+                    sb.AppendLine($"    var rt_{varName} = {varName}.AddComponent<RectTransform>();");
+                    sb.AppendLine($"    ui.MoveTransform(rt_{varName}, {w}, {h}, 0.5f, 0.5f, {x}, {y});");
+                    
+                    string groupType = (el.Type == ElementType.VerticalLayout) ? "VerticalLayoutGroup" : "HorizontalLayoutGroup";
+                    sb.AppendLine($"    var lg_{varName} = {varName}.AddComponent<{groupType}>();");
+                    sb.AppendLine($"    lg_{varName}.padding = new RectOffset({el.PaddingLeft}, {el.PaddingRight}, {el.PaddingTop}, {el.PaddingBottom});");
+                    sb.AppendLine($"    lg_{varName}.spacing = {el.Spacing}f;");
+                    sb.AppendLine($"    lg_{varName}.childAlignment = TextAnchor.{el.Alignment};");
+                    sb.AppendLine($"    lg_{varName}.childControlWidth = {(el.ChildControlWidth ? "true" : "false")};");
+                    sb.AppendLine($"    lg_{varName}.childControlHeight = {(el.ChildControlHeight ? "true" : "false")};");
+                    sb.AppendLine($"    lg_{varName}.childForceExpandWidth = {(el.ChildForceExpandWidth ? "true" : "false")};");
+                    sb.AppendLine($"    lg_{varName}.childForceExpandHeight = {(el.ChildForceExpandHeight ? "true" : "false")};");
+
+                    foreach (var child in el.Children)
+                    {
+                        ExportElement(sb, child, $"{varName}.transform");
+                    }
+                    break;
+            }
         }
     }
 }

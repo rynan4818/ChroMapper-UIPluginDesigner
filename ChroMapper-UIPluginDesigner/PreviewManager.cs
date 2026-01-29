@@ -81,7 +81,9 @@ namespace ChroMapper_UIPluginDesigner
             rt.anchorMax = new Vector2(ax, ay);
         }
 
-        public void Refresh(List<ElementData> elements, ElementData selectedElement, UnityAction<ElementData> onSelect, UnityAction<ElementData> onUpdate)
+        private Dictionary<GameObject, ElementData> _objToData = new Dictionary<GameObject, ElementData>();
+
+        public void Refresh(List<ElementData> elements, ElementData selectedElement, UnityAction<ElementData> onSelect, UnityAction<ElementData> onUpdate, UnityAction<ElementData, ElementData> onReparent)
         {
             if (_previewMenuBg == null) return;
 
@@ -89,7 +91,13 @@ namespace ChroMapper_UIPluginDesigner
             {
                 UnityEngine.Object.Destroy(child.gameObject);
             }
+            _objToData.Clear();
 
+            BuildElementsRecursive(elements, _previewMenuBg.transform, selectedElement, onSelect, onUpdate, onReparent);
+        }
+
+        private void BuildElementsRecursive(List<ElementData> elements, Transform parent, ElementData selectedElement, UnityAction<ElementData> onSelect, UnityAction<ElementData> onUpdate, UnityAction<ElementData, ElementData> onReparent)
+        {
             foreach (var el in elements)
             {
                 GameObject obj = null;
@@ -97,33 +105,80 @@ namespace ChroMapper_UIPluginDesigner
                 switch (el.Type)
                 {
                     case ElementType.Button:
-                        var btn = _ui.AddButton(_previewMenuBg.transform, el.Name, el.Text, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, () => onSelect(el));
+                        var btn = _ui.AddButton(parent, el.Name, el.Text, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, () => onSelect(el));
                         obj = btn.gameObject;
                         break;
                     case ElementType.Label:
-                        var lbl = _ui.AddLabel(_previewMenuBg.transform, el.Name, el.Text, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, TextAlignmentOptions.Center, el.FontSize);
+                        var lbl = _ui.AddLabel(parent, el.Name, el.Text, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, TextAlignmentOptions.Center, el.FontSize);
                         obj = lbl.Item1.gameObject;
                         break;
                     case ElementType.TextInput:
-                        var inp = _ui.AddTextInput(_previewMenuBg.transform, el.Name, el.Text, TextAlignmentOptions.Left, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { }, 0.5f, 0.5f);
+                        var inp = _ui.AddTextInput(parent, el.Name, el.Text, TextAlignmentOptions.Left, el.FontSize, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { }, 0.5f, 0.5f);
                         obj = inp.gameObject;
                         break;
                     case ElementType.Dropdown:
-                        var dd = _ui.AddDropdown(_previewMenuBg.transform, new List<string> { "Option A" }, 0, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
+                        var dd = _ui.AddDropdown(parent, new List<string> { "Option A" }, 0, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
                         obj = dd.gameObject;
                         break;
                     case ElementType.Checkbox:
-                        var tgl = _ui.AddCheckbox(_previewMenuBg.transform, true, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
+                        var tgl = _ui.AddCheckbox(parent, true, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY, (v) => { });
                         obj = tgl.gameObject;
+                        break;
+                    case ElementType.VerticalLayout:
+                    case ElementType.HorizontalLayout:
+                        obj = new GameObject(el.Name);
+                        var rt = obj.AddComponent<RectTransform>();
+                        rt.SetParent(parent);
+                        _ui.MoveTransform(rt, el.SizeX, el.SizeY, 0.5f, 0.5f, el.AnchorPosX, el.AnchorPosY);
+                        
+                        var img = obj.AddComponent<Image>();
+                        img.color = new Color(1, 1, 1, 0.1f); // Visual feedback for layout group
+
+                        UnityEngine.UI.HorizontalOrVerticalLayoutGroup group = null;
+                        if (el.Type == ElementType.VerticalLayout)
+                            group = obj.AddComponent<VerticalLayoutGroup>();
+                        else
+                            group = obj.AddComponent<HorizontalLayoutGroup>();
+
+                        group.padding = new RectOffset(el.PaddingLeft, el.PaddingRight, el.PaddingTop, el.PaddingBottom);
+                        group.spacing = el.Spacing;
+                        group.childAlignment = el.Alignment;
+                        group.childControlWidth = el.ChildControlWidth;
+                        group.childControlHeight = el.ChildControlHeight;
+                        group.childForceExpandWidth = el.ChildForceExpandWidth;
+                        group.childForceExpandHeight = el.ChildForceExpandHeight;
+
+                        // Click to select layout group
+                        var triggerLG = obj.AddComponent<EventTrigger>();
+                        var entryLG = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+                        entryLG.callback.AddListener((data) => {
+                             onSelect(el);
+                        });
+                        triggerLG.triggers.Add(entryLG);
+
+                        BuildElementsRecursive(el.Children, obj.transform, selectedElement, onSelect, onUpdate, onReparent);
                         break;
                 }
 
                 if (obj != null)
                 {
-                    var trigger = obj.GetComponent<EventTrigger>() ?? obj.AddComponent<EventTrigger>();
-                    var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
-                    entry.callback.AddListener((data) => onSelect(el));
-                    trigger.triggers.Add(entry);
+                    _objToData[obj] = el;
+
+                    if (el.Type != ElementType.VerticalLayout && el.Type != ElementType.HorizontalLayout)
+                    {
+                        var trigger = obj.GetComponent<EventTrigger>() ?? obj.AddComponent<EventTrigger>();
+                        var entry = new EventTrigger.Entry { eventID = EventTriggerType.PointerClick };
+                        entry.callback.AddListener((data) => onSelect(el));
+                        trigger.triggers.Add(entry);
+                    }
+                    
+                    // Highlight selected
+                    if (el == selectedElement)
+                    {
+                        var outline = obj.AddComponent<UnityEngine.UI.Outline>();
+                        outline.effectColor = Color.yellow;
+                        outline.effectDistance = new Vector2(2, -2);
+                    }
 
                     var dragger = obj.AddComponent<ElementDragHandler>();
                     dragger.Canvas = _canvas;
@@ -142,7 +197,33 @@ namespace ChroMapper_UIPluginDesigner
                             onUpdate(el);
                         }
                     };
-                    dragger.OnDragEnd = () => onSelect(el);
+                    dragger.OnDragEnd = (eventData) => {
+                        onSelect(el);
+                        
+                        // Raycast to find drop target
+                        var results = new List<RaycastResult>();
+                        EventSystem.current.RaycastAll(eventData, results);
+
+                        foreach (var result in results)
+                        {
+                            if (result.gameObject == obj) continue; // Ignore self
+
+                            if (_objToData.ContainsKey(result.gameObject))
+                            {
+                                var targetData = _objToData[result.gameObject];
+                                if (targetData.Type == ElementType.VerticalLayout || targetData.Type == ElementType.HorizontalLayout)
+                                {
+                                    onReparent(el, targetData);
+                                    return;
+                                }
+                            }
+                            else if (result.gameObject == _previewMenuBg)
+                            {
+                                onReparent(el, null); // Move to root
+                                return;
+                            }
+                        }
+                    };
                 }
             }
         }
